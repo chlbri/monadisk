@@ -23,11 +23,15 @@ jobs:
       - name: Install deps and build (with cache)
         uses: bahmutov/npm-install@v1
 
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: latest
+
       - name: Lint
-        run: yarn lint
+        run: pnpm lint
 
       - name: Test
-        run: yarn test --ci --coverage --maxWorkers=2
+        run: pnpm test --ci --coverage --maxWorkers=2
 
       - name: Build
-        run: yarn build
+        run: pnpm build
