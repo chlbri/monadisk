@@ -1,2 +1,1 @@
-/// <reference types="node" />
-export declare const sleep: typeof import('timers/promises').setTimeout;
+export declare function sleep(ms?: number): Promise<unknown>;

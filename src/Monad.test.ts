@@ -1,19 +1,6 @@
 import { Monad } from './Monad';
 
 describe('Typing monad ', () => {
-  // const datas = [
-  //   undefined,
-  //   1,
-  //   -1,
-  //   0,
-  //   'empty',
-  //   'another string',
-  //   true,
-  //   45,
-  //   new Date(),
-  //   new Set(),
-  // ];
-
   const testMonad = new Monad({
     string: (data: string) => typeof data === 'string',
     positive: (data: number) => typeof data === 'number' && data > 0,
@@ -39,13 +26,13 @@ describe('Typing monad ', () => {
       date: () => 'date',
       else: () => 'inconnu',
     });
+
     testMonad.setMapper(mapper);
   });
 
   type Helper = {
     invite: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    value: any;
+    value: unknown;
     _mapped: string;
     expected: string;
     length: number;

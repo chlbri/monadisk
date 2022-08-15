@@ -2,7 +2,7 @@ arrowParens: avoid
 bracketSpacing: true
 endOfLine: lf
 htmlWhitespaceSensitivity: css
-jsxBracketSameLine: false
+bracketSameLine: false
 printWidth: 75
 proseWrap: always
 requirePragma: false

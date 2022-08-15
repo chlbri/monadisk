@@ -1,7 +1,7 @@
 import { Def, History, Mapper, Param, Subscriber } from './types';
 
 export class Monad<T extends Def = Def> {
-  constructor(private def: T, public current?: Param<T>) {}
+  constructor(private def: T, public current?: unknown) {}
 
   #history: History[] = [];
 
@@ -35,20 +35,15 @@ export class Monad<T extends Def = Def> {
   };
 
   #map = <R = unknown>(mapper: Mapper<T, R>): R => {
-    const _else = mapper.else;
-    if (this.isUndefined) {
-      return _else(this.current);
-    } else {
-      const entries = Object.entries(this.def);
-      for (const [key, cond] of entries) {
-        const func = mapper[key];
-        const validated = cond(this.current);
-        if (func && validated) {
-          return func(this.current);
-        }
+    const entries = Object.entries(this.def);
+    for (const [key, cond] of entries) {
+      const func = mapper[key];
+      const validated = cond(this.current);
+      if (func && validated) {
+        return func(this.current);
       }
-      return _else(this.current);
     }
+    return mapper.else(this.current);
   };
 
   createMap = <R>(mapper: Mapper<T, R>) => mapper;
@@ -61,13 +56,14 @@ export class Monad<T extends Def = Def> {
     this.#mapper = mapper;
   };
 
-  transform<R = unknown>(mapper: Mapper<T, R>, flush = true) {
+  transform<R = unknown>(mapper: Mapper<T, R>, flush = false) {
     this.setMapper(mapper);
     if (!this.#mapper) throw new Error('No mapper');
-    this.#mapped = this.#map(this.#mapper);
+    const _mapped = this.#map(this.#mapper);
+    this.#mapped = _mapped;
     this.#addHistory();
     flush && this.#flushSubcribers();
-    return this.#mapped as R;
+    return _mapped as R;
   }
 
   merge = <R extends Def = Def>(
@@ -78,11 +74,11 @@ export class Monad<T extends Def = Def> {
     return new Monad<R>(other.def, current);
   };
 
-  next = (...datas: Param<T>[]) => {
+  next = (...datas: unknown[]) => {
     datas.forEach(data => {
       this.current = data;
       if (!this.#mapper) throw new Error('No mapper');
-      this.transform(this.#mapper);
+      this.transform(this.#mapper, true);
     });
   };
 }

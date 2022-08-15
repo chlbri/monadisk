@@ -1,3 +1,3 @@
-import { promisify } from 'util';
-
-export const sleep = promisify(setTimeout);
+export function sleep(ms = 300) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
