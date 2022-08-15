@@ -2,54 +2,9 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-function _asyncIterator(iterable) {
-  var method,
-      async,
-      sync,
-      retry = 2;
+var util = require('util');
 
-  for ("undefined" != typeof Symbol && (async = Symbol.asyncIterator, sync = Symbol.iterator); retry--;) {
-    if (async && null != (method = iterable[async])) return method.call(iterable);
-    if (sync && null != (method = iterable[sync])) return new AsyncFromSyncIterator(method.call(iterable));
-    async = "@@asyncIterator", sync = "@@iterator";
-  }
-
-  throw new TypeError("Object is not async iterable");
-}
-
-function AsyncFromSyncIterator(s) {
-  function AsyncFromSyncIteratorContinuation(r) {
-    if (Object(r) !== r) return Promise.reject(new TypeError(r + " is not an object."));
-    var done = r.done;
-    return Promise.resolve(r.value).then(function (value) {
-      return {
-        value: value,
-        done: done
-      };
-    });
-  }
-
-  return AsyncFromSyncIterator = function (s) {
-    this.s = s, this.n = s.next;
-  }, AsyncFromSyncIterator.prototype = {
-    s: null,
-    n: null,
-    next: function () {
-      return AsyncFromSyncIteratorContinuation(this.n.apply(this.s, arguments));
-    },
-    return: function (value) {
-      var ret = this.s.return;
-      return void 0 === ret ? Promise.resolve({
-        value: value,
-        done: !0
-      }) : AsyncFromSyncIteratorContinuation(ret.apply(this.s, arguments));
-    },
-    throw: function (value) {
-      var thr = this.s.return;
-      return void 0 === thr ? Promise.reject(value) : AsyncFromSyncIteratorContinuation(thr.apply(this.s, arguments));
-    }
-  }, new AsyncFromSyncIterator(s);
-}
+var sleep = /*#__PURE__*/util.promisify(setTimeout);
 
 function _regeneratorRuntime() {
   /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
@@ -396,115 +351,6 @@ function _regeneratorRuntime() {
   }, exports;
 }
 
-function _AwaitValue(value) {
-  this.wrapped = value;
-}
-
-function _AsyncGenerator(gen) {
-  var front, back;
-
-  function send(key, arg) {
-    return new Promise(function (resolve, reject) {
-      var request = {
-        key: key,
-        arg: arg,
-        resolve: resolve,
-        reject: reject,
-        next: null
-      };
-
-      if (back) {
-        back = back.next = request;
-      } else {
-        front = back = request;
-        resume(key, arg);
-      }
-    });
-  }
-
-  function resume(key, arg) {
-    try {
-      var result = gen[key](arg);
-      var value = result.value;
-      var wrappedAwait = value instanceof _AwaitValue;
-      Promise.resolve(wrappedAwait ? value.wrapped : value).then(function (arg) {
-        if (wrappedAwait) {
-          resume(key === "return" ? "return" : "next", arg);
-          return;
-        }
-
-        settle(result.done ? "return" : "normal", arg);
-      }, function (err) {
-        resume("throw", err);
-      });
-    } catch (err) {
-      settle("throw", err);
-    }
-  }
-
-  function settle(type, value) {
-    switch (type) {
-      case "return":
-        front.resolve({
-          value: value,
-          done: true
-        });
-        break;
-
-      case "throw":
-        front.reject(value);
-        break;
-
-      default:
-        front.resolve({
-          value: value,
-          done: false
-        });
-        break;
-    }
-
-    front = front.next;
-
-    if (front) {
-      resume(front.key, front.arg);
-    } else {
-      back = null;
-    }
-  }
-
-  this._invoke = send;
-
-  if (typeof gen.return !== "function") {
-    this.return = undefined;
-  }
-}
-
-_AsyncGenerator.prototype[typeof Symbol === "function" && Symbol.asyncIterator || "@@asyncIterator"] = function () {
-  return this;
-};
-
-_AsyncGenerator.prototype.next = function (arg) {
-  return this._invoke("next", arg);
-};
-
-_AsyncGenerator.prototype.throw = function (arg) {
-  return this._invoke("throw", arg);
-};
-
-_AsyncGenerator.prototype.return = function (arg) {
-  return this._invoke("return", arg);
-};
-
-function _wrapAsyncGenerator(fn) {
-  return function () {
-    return new _AsyncGenerator(fn.apply(this, arguments));
-  };
-}
-
-function _awaitAsyncGenerator(value) {
-  return new _AwaitValue(value);
-}
-
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
   try {
     var info = gen[key](arg);
@@ -541,6 +387,39 @@ function _asyncToGenerator(fn) {
   };
 }
 
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  Object.defineProperty(Constructor, "prototype", {
+    writable: false
+  });
+  return Constructor;
+}
+
+var id = 0;
+
+function _classPrivateFieldLooseKey(name) {
+  return "__private_" + id++ + "_" + name;
+}
+
+function _classPrivateFieldLooseBase(receiver, privateKey) {
+  if (!Object.prototype.hasOwnProperty.call(receiver, privateKey)) {
+    throw new TypeError("attempted to use private field on non-instance");
+  }
+
+  return receiver;
+}
+
 var sum = function sum(a, b) {
   {
     console.log('boop');
@@ -549,110 +428,161 @@ var sum = function sum(a, b) {
   return a + b;
 };
 
-var Monad = function Monad(def, value) {
-  var _this = this;
+var _history = /*#__PURE__*/_classPrivateFieldLooseKey("history");
 
-  this.def = def;
-  this.value = value;
-  this.history = [];
+var _subscribers = /*#__PURE__*/_classPrivateFieldLooseKey("subscribers");
 
-  this.map = function (mapp) {
-    var entries = Object.entries(_this.def);
-    var _else = mapp["else"];
+var _mapper = /*#__PURE__*/_classPrivateFieldLooseKey("mapper");
 
-    if (_this.value === undefined) {
-      if (_else) return _else(_this.value);
-      return undefined;
-    }
+var _mapped = /*#__PURE__*/_classPrivateFieldLooseKey("mapped");
 
-    for (var _i = 0, _entries = entries; _i < _entries.length; _i++) {
-      var _entries$_i = _entries[_i],
-          key = _entries$_i[0],
-          cond = _entries$_i[1];
-      var func = mapp[key];
+var _addHistory = /*#__PURE__*/_classPrivateFieldLooseKey("addHistory");
 
-      if (func) {
-        var mapped = func(_this.value);
-        var validated = cond(_this.value);
-        if (validated) return mapped;
-      }
-    }
+var _flushSubcribers = /*#__PURE__*/_classPrivateFieldLooseKey("flushSubcribers");
 
-    if (_else) return _else(_this.value);
-    return undefined;
-  };
+var _map = /*#__PURE__*/_classPrivateFieldLooseKey("map");
 
-  this.add = function () {
-    for (var _len = arguments.length, datas = new Array(_len), _key = 0; _key < _len; _key++) {
-      datas[_key] = arguments[_key];
-    }
+var Monad = /*#__PURE__*/function () {
+  function Monad(def, current) {
+    var _this = this;
 
-    datas.forEach(function (data) {
-      _this.value = data;
-
-      _this.history.push(_this.value);
+    Object.defineProperty(this, _history, {
+      writable: true,
+      value: void 0
     });
-  };
+    Object.defineProperty(this, _subscribers, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _mapper, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _mapped, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _addHistory, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _flushSubcribers, {
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, _map, {
+      writable: true,
+      value: void 0
+    });
+    this.def = def;
+    this.current = current;
+    _classPrivateFieldLooseBase(this, _history)[_history] = [];
+    _classPrivateFieldLooseBase(this, _subscribers)[_subscribers] = [];
 
-  this.createMap = function (mapp) {
-    return mapp;
-  };
-};
+    _classPrivateFieldLooseBase(this, _addHistory)[_addHistory] = function () {
+      var hist = {
+        input: _this.current,
+        output: _classPrivateFieldLooseBase(_this, _mapped)[_mapped]
+      };
 
-function sleep(ms) {
-  if (ms === void 0) {
-    ms = 300;
+      _classPrivateFieldLooseBase(_this, _history)[_history].push(hist);
+    };
+
+    _classPrivateFieldLooseBase(this, _flushSubcribers)[_flushSubcribers] = function () {
+      _classPrivateFieldLooseBase(_this, _subscribers)[_subscribers].forEach(function (subscriber) {
+        return subscriber(_this.current, _classPrivateFieldLooseBase(_this, _mapped)[_mapped]);
+      });
+    };
+
+    _classPrivateFieldLooseBase(this, _map)[_map] = function (mapper) {
+      var _else = mapper["else"];
+
+      if (_this.isUndefined) {
+        return _else(_this.current);
+      } else {
+        var entries = Object.entries(_this.def);
+
+        for (var _i = 0, _entries = entries; _i < _entries.length; _i++) {
+          var _entries$_i = _entries[_i],
+              key = _entries$_i[0],
+              cond = _entries$_i[1];
+          var func = mapper[key];
+          var validated = cond(_this.current);
+
+          if (func && validated) {
+            return func(_this.current);
+          }
+        }
+
+        return _else(_this.current);
+      }
+    };
+
+    this.createMap = function (mapper) {
+      return mapper;
+    };
+
+    this.subscribe = function (subscriber) {
+      _classPrivateFieldLooseBase(_this, _subscribers)[_subscribers].push(subscriber);
+    };
+
+    this.setMapper = function (mapper) {
+      _classPrivateFieldLooseBase(_this, _mapper)[_mapper] = mapper;
+    };
+
+    this.merge = function (other, mapper) {
+      var current = mapper ? _classPrivateFieldLooseBase(_this, _map)[_map](mapper) : other.current;
+      return new Monad(other.def, current);
+    };
+
+    this.next = function () {
+      for (var _len = arguments.length, datas = new Array(_len), _key = 0; _key < _len; _key++) {
+        datas[_key] = arguments[_key];
+      }
+
+      datas.forEach(function (data) {
+        _this.current = data;
+
+        _this.transform(_classPrivateFieldLooseBase(_this, _mapper)[_mapper]);
+      });
+    };
   }
 
-  return new Promise(function (resolve) {
-    return setTimeout(resolve, ms);
-  });
-}
+  var _proto = Monad.prototype;
 
-function gen() {
-  return _gen.apply(this, arguments);
-}
+  _proto.transform = function transform(mapper, flush) {
+    if (flush === void 0) {
+      flush = true;
+    }
 
-function _gen() {
-  _gen = _wrapAsyncGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-    var datas, _i2, _datas, data;
+    this.setMapper(mapper);
+    _classPrivateFieldLooseBase(this, _mapped)[_mapped] = _classPrivateFieldLooseBase(this, _map)[_map](_classPrivateFieldLooseBase(this, _mapper)[_mapper]);
 
-    return _regeneratorRuntime().wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            datas = [undefined, 1, -1, 0, 'empty', 'another string', true, 45, new Date()];
-            _i2 = 0, _datas = datas;
+    _classPrivateFieldLooseBase(this, _addHistory)[_addHistory]();
 
-          case 2:
-            if (!(_i2 < _datas.length)) {
-              _context.next = 11;
-              break;
-            }
+    flush && _classPrivateFieldLooseBase(this, _flushSubcribers)[_flushSubcribers]();
+    return _classPrivateFieldLooseBase(this, _mapped)[_mapped];
+  };
 
-            data = _datas[_i2];
-            _context.next = 6;
-            return _awaitAsyncGenerator(sleep());
+  _createClass(Monad, [{
+    key: "isUndefined",
+    get: function get() {
+      return this.current === undefined;
+    }
+  }, {
+    key: "_mapped",
+    get: function get() {
+      return _classPrivateFieldLooseBase(this, _mapped)[_mapped];
+    }
+  }, {
+    key: "history",
+    get: function get() {
+      return _classPrivateFieldLooseBase(this, _history)[_history];
+    }
+  }]);
 
-          case 6:
-            _context.next = 8;
-            return data;
-
-          case 8:
-            _i2++;
-            _context.next = 2;
-            break;
-
-          case 11:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee);
-  }));
-  return _gen.apply(this, arguments);
-}
-
+  return Monad;
+}();
 var testMonad = /*#__PURE__*/new Monad({
   string: function string(data) {
     return typeof data === 'string';
@@ -691,104 +621,65 @@ var map = /*#__PURE__*/testMonad.createMap({
   },
   date: function date() {
     return 'date';
+  },
+  "else": function _else() {
+    return 'inconnu';
   }
 });
-
-function tester(data) {
-  testMonad.add(data);
-  console.log(data, ' => ', testMonad.map(map));
-}
-
 function main() {
   return _main.apply(this, arguments);
 }
 
 function _main() {
-  _main = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-    var _iteratorAbruptCompletion, _didIteratorError, _iteratorError, _iterator, _step, x;
+  _main = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+    var datas, _i2, _datas, data;
 
-    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+    return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) {
-        switch (_context2.prev = _context2.next) {
+        switch (_context.prev = _context.next) {
           case 0:
-            console.log('************************');
-            console.log('Async iteration');
-            console.log('************************\n');
-            _iteratorAbruptCompletion = false;
-            _didIteratorError = false;
-            _context2.prev = 5;
-            _iterator = _asyncIterator(gen());
+            datas = [undefined, 1, -1, 0, 'empty', 'another string', true, 45, new Date(), new Set()];
+            testMonad.subscribe(function (input, output) {
+              console.log(input + " => " + output);
+            });
+            testMonad.setMapper(map);
+            _i2 = 0, _datas = datas;
 
-          case 7:
-            _context2.next = 9;
-            return _iterator.next();
+          case 4:
+            if (!(_i2 < _datas.length)) {
+              _context.next = 12;
+              break;
+            }
+
+            data = _datas[_i2];
+            _context.next = 8;
+            return sleep(300);
+
+          case 8:
+            testMonad.next(data);
 
           case 9:
-            if (!(_iteratorAbruptCompletion = !(_step = _context2.sent).done)) {
-              _context2.next = 15;
-              break;
-            }
-
-            x = _step.value;
-            tester(x);
+            _i2++;
+            _context.next = 4;
+            break;
 
           case 12:
-            _iteratorAbruptCompletion = false;
-            _context2.next = 7;
-            break;
+            console.log(testMonad.history);
 
-          case 15:
-            _context2.next = 21;
-            break;
-
-          case 17:
-            _context2.prev = 17;
-            _context2.t0 = _context2["catch"](5);
-            _didIteratorError = true;
-            _iteratorError = _context2.t0;
-
-          case 21:
-            _context2.prev = 21;
-            _context2.prev = 22;
-
-            if (!(_iteratorAbruptCompletion && _iterator["return"] != null)) {
-              _context2.next = 26;
-              break;
-            }
-
-            _context2.next = 26;
-            return _iterator["return"]();
-
-          case 26:
-            _context2.prev = 26;
-
-            if (!_didIteratorError) {
-              _context2.next = 29;
-              break;
-            }
-
-            throw _iteratorError;
-
-          case 29:
-            return _context2.finish(26);
-
-          case 30:
-            return _context2.finish(21);
-
-          case 31:
-            console.log('\n************************');
-
-          case 32:
+          case 13:
           case "end":
-            return _context2.stop();
+            return _context.stop();
         }
       }
-    }, _callee2, null, [[5, 17, 21, 31], [22,, 26, 30]]);
+    }, _callee);
   }));
   return _main.apply(this, arguments);
 }
 
 main();
 
+exports.Monad = Monad;
+exports.main = main;
+exports.sleep = sleep;
 exports.sum = sum;
 //# sourceMappingURL=monadisk.cjs.development.js.map
