@@ -3,7 +3,7 @@ on: [push]
 jobs:
   build:
     name:
-      Build, lint, and test on Node ${{ matrix.node }} and ubuntu-latest
+      Main action
 
     runs-on: ubuntu-latest
     strategy:
@@ -34,3 +34,13 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+      - name: Publish
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          greater-version-only: true
+
+
+
+
