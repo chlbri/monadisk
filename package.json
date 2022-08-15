@@ -13,8 +13,8 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
-    "test": "tsdx test",
-    "test-w": "tsdx test --watch",
+    "test": "jest",
+    "test-w": "pnpm test -- --watch",
     "lint": "prettier --write \"**/**.{ts,tsx,json,js,jsx,yml}\"",
     "prepare": "tsdx build",
     "size": "size-limit",
@@ -39,13 +39,17 @@
     }
   ],
   "devDependencies": {
+    "@bemedev/npm-publish": "0.0.1-pnpm2",
     "@size-limit/preset-small-lib": "^8.0.1",
+    "@swc/core": "^1.2.233",
+    "@swc/jest": "^0.2.22",
     "@types/jest": "^28.1.6",
     "@types/node": "^18.7.3",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
     "eslint": "^8.22.0",
     "husky": "^8.0.1",
+    "jest": "^28.1.3",
     "jest-extended": "^3.0.2",
     "prettier": "^2.7.1",
     "size-limit": "^8.0.1",
