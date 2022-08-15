@@ -5,7 +5,7 @@ tasks:
     before: sh .gitpod-config/globalDependencies.sh
     init: sh .gitpod-config/dependencies.sh
     command: jest
-    
+
 vscode:
   extensions:
     - github.vscode-pull-request-github

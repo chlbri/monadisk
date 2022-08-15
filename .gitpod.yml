@@ -5,7 +5,7 @@ tasks:
     before: bash .gitpod-config/globalDependencies.sh
     init: pnpm install
     command: jest
-    
+
 vscode:
   extensions:
     - github.vscode-pull-request-github

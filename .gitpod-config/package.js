@@ -5,7 +5,7 @@ const fs = require('fs');
 const package = edit(`${process.cwd()}/package.json`);
 
 const repository = shell
-  .exec('git config --get remote.origin.url', {silent: true})
+  .exec('git config --get remote.origin.url', { silent: true })
   .replace(/\r?\n|\r/g, '');
 
 package.set('repository', repository);

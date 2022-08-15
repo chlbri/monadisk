@@ -15,14 +15,14 @@
     "build": "tsdx build",
     "test": "tsdx test",
     "test-w": "tsdx test --watch",
-    "lint": "tsdx lint",
+    "lint": "prettier --write \"**/**.{ts,tsx,json,js,jsx,yml}\"",
     "prepare": "tsdx build",
     "size": "size-limit",
     "analyze": "size-limit --why"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "tsdx lint"
+      "pre-commit": "prettier --write \"**/**.{ts,tsx,json,js,jsx,yml}\""
     }
   },
   "name": "monadisk",
