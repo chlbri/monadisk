@@ -2,6 +2,6 @@ module.exports = {
   transform: {
     '^.+\\.(t|j)sx?$': ['@swc/jest'],
   },
-  testEnviroment: 'node',
+  testEnvironment: 'node',
   modulePathIgnorePatterns: ['dist'],
 };
