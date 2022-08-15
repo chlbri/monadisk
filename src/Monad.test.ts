@@ -43,6 +43,7 @@ describe('Typing monad ', () => {
 
   type Helper = {
     invite: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any;
     _mapped: string;
     expected: string;

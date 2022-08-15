@@ -1,12 +1,4 @@
-import { sleep } from './helpers';
 import { Def, History, Mapper, Param, Subscriber } from './types';
-
-export const sum = (a: number, b: number) => {
-  if ('development' === process.env.NODE_ENV) {
-    console.log('boop');
-  }
-  return a + b;
-};
 
 export class Monad<T extends Def = Def> {
   constructor(private def: T, public current?: Param<T>) {}
@@ -17,7 +9,7 @@ export class Monad<T extends Def = Def> {
 
   #mapper?: Mapper<T, unknown>;
 
-  #mapped: any;
+  #mapped: unknown;
 
   get isUndefined() {
     return this.current === undefined;
@@ -42,7 +34,7 @@ export class Monad<T extends Def = Def> {
     );
   };
 
-  #map = <R = any>(mapper: Mapper<T, R>): R => {
+  #map = <R = unknown>(mapper: Mapper<T, R>): R => {
     const _else = mapper.else;
     if (this.isUndefined) {
       return _else(this.current);
@@ -65,13 +57,14 @@ export class Monad<T extends Def = Def> {
     this.#subscribers.push(subscriber);
   };
 
-  setMapper = <R = any>(mapper: Mapper<T, R>) => {
+  setMapper = <R = unknown>(mapper: Mapper<T, R>) => {
     this.#mapper = mapper;
   };
 
-  transform<R = any>(mapper: Mapper<T, R>, flush = true) {
+  transform<R = unknown>(mapper: Mapper<T, R>, flush = true) {
     this.setMapper(mapper);
-    this.#mapped = this.#map(this.#mapper!);
+    if (!this.#mapper) throw new Error('No mapper');
+    this.#mapped = this.#map(this.#mapper);
     this.#addHistory();
     flush && this.#flushSubcribers();
     return this.#mapped as R;
@@ -88,55 +81,8 @@ export class Monad<T extends Def = Def> {
   next = (...datas: Param<T>[]) => {
     datas.forEach(data => {
       this.current = data;
-      this.transform(this.#mapper!);
+      if (!this.#mapper) throw new Error('No mapper');
+      this.transform(this.#mapper);
     });
   };
 }
-
-const testMonad = new Monad({
-  string: (data: string) => typeof data === 'string',
-  positive: (data: number) => typeof data === 'number' && data > 0,
-  negative: (data: number) => typeof data === 'number' && data < 0,
-  zero: (data: number) => typeof data === 'number' && data === 0,
-  boolean: (data: boolean) => typeof data === 'boolean',
-  date: (data: Date) => data instanceof Date,
-});
-
-const map = testMonad.createMap({
-  positive: () => 'positif',
-  negative: () => 'négatif',
-  boolean: () => 'booléen',
-  zero: () => 'nul',
-  string: () => 'string',
-  date: () => 'date',
-  else: () => 'inconnu',
-});
-
-export async function main() {
-  const datas = [
-    undefined,
-    1,
-    -1,
-    0,
-    'empty',
-    'another string',
-    true,
-    45,
-    new Date(),
-    new Set(),
-  ];
-  testMonad.subscribe((input, output) => {
-    console.log(`${input} => ${output}`);
-  });
-
-  testMonad.setMapper(map);
-
-  for (const data of datas) {
-    await sleep(300);
-    testMonad.next(data as any);
-  }
-
-  console.log(testMonad.history);
-}
-
-main();
