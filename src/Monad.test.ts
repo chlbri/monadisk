@@ -29,6 +29,7 @@ describe('Typing monad ', () => {
     testMonad.subscribe((input, output) => {
       expecteds.push(`${input} => ${output}`);
     });
+    
     const mapper = testMonad.createMap({
       positive: () => 'positif',
       negative: () => 'négatif',
@@ -117,13 +118,28 @@ describe('Typing monad ', () => {
     expected: 'I believe I can fly => string',
     length: 5,
   });
-
-  helperTest({
-    invite: 'Date Value',
-    value: new Date(2022, 8, 15, 0, 0, 0, 0),
-    _mapped: 'date',
-    expected:
-      'Thu Sep 15 2022 00:00:00 GMT+0000 (heure moyenne de Greenwich) => date',
-    length: 6,
-  });
+  
+  describe('Date value', () => {
+      beforeAll(() => {
+        testMonad.next(new Date(2022, 8, 15, 0, 0, 0, 0));
+      });
+      test('It should map the right message', () => {
+        expect(testMonad._mapped).toEqual('date');
+      });
+      test('History should have the right length', () => {
+        expect(testMonad.history).toHaveLength(6);
+      });
+      describe('The subscription :', () => {
+        it('Has the right length', () => {
+          expect(expecteds).toHaveLength(6);
+        });
+        test('Has the right message', () => {
+          const date = testMonad.current as Date 
+          const month = date.getUTCMonth()
+          const year = date.getFullYear()
+          expect(month).toBe(8);
+          expect(year).toBe(2022)
+        });
+      });
+    });
 });
