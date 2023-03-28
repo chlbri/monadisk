@@ -114,4 +114,89 @@ export type NotSubType<Base, Condition> = Omit<
   Base,
   AllowedNames<Base, Condition>
 >;
+
+export type Params = {
+  [key: string]: [any, any];
+};
+
+export type CreateMonadParams<
+  T extends Params = Params,
+  R = unknown,
+> = {
+  options: {
+    [key in keyof T]: {
+      check: string;
+      transform: string;
+    };
+  };
+  else: string;
+  types?: T;
+  strict?: boolean;
+  default?: R;
+};
+
+type GetTFromMonadParams<T extends CreateMonadParams> = T['types'];
+
+type GetRFromMonadParams<T extends CreateMonadParams> =
+  T extends CreateMonadParams<any, infer A> ? A : unknown;
+
+type GetCreateMonadParamsCheck<T extends CreateMonadParams> =
+  T['options'][keyof T['options']]['check'];
+
+type GetCreateMonadParamsTransform<T extends CreateMonadParams> =
+  T['options'][keyof T['options']]['transform'];
+
+type GetParentKeyFromTransform<
+  T extends CreateMonadParams,
+  K extends GetCreateMonadParamsTransform<T>,
+> = keyof SubType<T['options'], { transform: K }>;
+
+type GetTransformSignature<
+  T extends CreateMonadParams,
+  K extends GetCreateMonadParamsTransform<T>,
+> = GetTFromMonadParams<T> extends infer TT
+  ? TT extends undefined
+    ? [unknown, GetRFromMonadParams<T>]
+    : GetParentKeyFromTransform<T, K> extends infer PT
+    ? PT extends keyof TT
+      ? TT[PT] extends [any, any]
+        ? TT[PT]
+        : [unknown, GetRFromMonadParams<T>]
+      : [unknown, GetRFromMonadParams<T>]
+    : [unknown, GetRFromMonadParams<T>]
+  : [unknown, GetRFromMonadParams<T>];
+
+export type CreateMonadOptions<T extends CreateMonadParams> = {
+  keepHistory?: boolean;
+  subcribable?: boolean;
+  guards: {
+    [key in GetCreateMonadParamsCheck<T>]: (data: unknown) => boolean;
+  };
+  transforms: {
+    [key in GetCreateMonadParamsTransform<T>]: (
+      data: GetTransformSignature<T, key>[0],
+    ) => GetTransformSignature<T, key>[1];
+  } & {
+    else: (data: unknown) => GetRFromMonadParams<T>;
+  };
+};
+
+type Params1 = {
+  options: {
+    string: {
+      check: 'isString';
+      transform: 'toString';
+    };
+    number: {
+      check: 'isNumber';
+      transform: 'toNumber';
+    };
+  };
+  else: 'toString';
+};
+
+type Tess = GetParentKeyFromTransform<Params1, 'toString'>;
+type TestTransform1 = GetCreateMonadParamsTransform<Params1>;
+
+type Test1 = CreateMonadOptions<Params1>;
 // #endregion

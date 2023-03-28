@@ -49,4 +49,5 @@ declare type FilterFlags<Base, Condition> = {
 declare type AllowedNames<Base, Condition> = FilterFlags<Base, Condition>[keyof Base];
 export declare type SubType<Base, Condition> = Pick<Base, AllowedNames<Base, Condition>>;
 export declare type NotSubType<Base, Condition> = Omit<Base, AllowedNames<Base, Condition>>;
+export declare type CreateMonadParams = {};
 export {};
