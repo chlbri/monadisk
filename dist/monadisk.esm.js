@@ -13,7 +13,7 @@ function _defineProperties(target, props) {
     descriptor.enumerable = descriptor.enumerable || false;
     descriptor.configurable = true;
     if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
+    Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor);
   }
 }
 function _createClass(Constructor, protoProps, staticProps) {
@@ -23,6 +23,20 @@ function _createClass(Constructor, protoProps, staticProps) {
     writable: false
   });
   return Constructor;
+}
+function _toPrimitive(input, hint) {
+  if (typeof input !== "object" || input === null) return input;
+  var prim = input[Symbol.toPrimitive];
+  if (prim !== undefined) {
+    var res = prim.call(input, hint || "default");
+    if (typeof res !== "object") return res;
+    throw new TypeError("@@toPrimitive must return a primitive value.");
+  }
+  return (hint === "string" ? String : Number)(input);
+}
+function _toPropertyKey(arg) {
+  var key = _toPrimitive(arg, "string");
+  return typeof key === "symbol" ? key : String(key);
 }
 var id = 0;
 function _classPrivateFieldLooseKey(name) {
@@ -110,9 +124,9 @@ var Monad = /*#__PURE__*/function () {
       _classPrivateFieldLooseBase(_this, _subscribers)[_subscribers].push(subscriber);
     };
     this.setMapper = function (mapper) {
-      _classPrivateFieldLooseBase(_this, _mapper)[_mapper] = mapper;
+      if (mapper) _classPrivateFieldLooseBase(_this, _mapper)[_mapper] = mapper;
     };
-    this.merge = function (other, mapper) {
+    this.change = function (other, mapper) {
       var current = mapper ? _classPrivateFieldLooseBase(_this, _map)[_map](mapper) : other.current;
       return new Monad(other.def, current);
     };
@@ -139,6 +153,10 @@ var Monad = /*#__PURE__*/function () {
     _classPrivateFieldLooseBase(this, _addHistory)[_addHistory]();
     flush && _classPrivateFieldLooseBase(this, _flushSubcribers)[_flushSubcribers]();
     return _mapped;
+  };
+  _proto.transformValue = function transformValue(data) {
+    this.current = data;
+    return this.transform();
   };
   _createClass(Monad, [{
     key: "isUndefined",

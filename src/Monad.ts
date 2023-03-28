@@ -52,11 +52,11 @@ export class Monad<T extends Def = Def> {
     this.#subscribers.push(subscriber);
   };
 
-  setMapper = <R = unknown>(mapper: Mapper<T, R>) => {
-    this.#mapper = mapper;
+  setMapper = <R = unknown>(mapper?: Mapper<T, R>) => {
+    if (mapper) this.#mapper = mapper;
   };
 
-  transform<R = unknown>(mapper: Mapper<T, R>, flush = false) {
+  transform<R = unknown>(mapper?: Mapper<T, R>, flush = false) {
     this.setMapper(mapper);
     if (!this.#mapper) throw new Error('No mapper');
     const _mapped = this.#map(this.#mapper);
@@ -66,7 +66,12 @@ export class Monad<T extends Def = Def> {
     return _mapped as R;
   }
 
-  merge = <R extends Def = Def>(
+  transformValue(data: Param<T>) {
+    this.current = data;
+    return this.transform();
+  }
+
+  change = <R extends Def = Def>(
     other: Monad<R>,
     mapper?: Mapper<T, Param<R>>,
   ) => {

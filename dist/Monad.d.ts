@@ -9,12 +9,13 @@ export declare class Monad<T extends Def = Def> {
     get history(): History<Def, unknown>[];
     createMap: <R>(mapper: Mapper<T, R>) => Mapper<T, R>;
     subscribe: (subscriber: Subscriber<Param<T>>) => void;
-    setMapper: <R = unknown>(mapper: Mapper<T, R>) => void;
-    transform<R = unknown>(mapper: Mapper<T, R>, flush?: boolean): R;
-    merge: <R extends Def = Def>(other: Monad<R>, mapper?: ({ [key in keyof T]: (data: Param<T, key>) => Param<R, keyof R>; } & {
-        else: (data?: Param<T, keyof T> | undefined) => Param<R, keyof R>;
-    }) | (Partial<{ [key in keyof T]: (data: Param<T, key>) => Param<R, keyof R>; }> & {
-        else: (data?: Param<T, keyof T> | undefined) => Param<R, keyof R>;
+    setMapper: <R = unknown>(mapper?: { [key in keyof T]: (data: Param<T, key>) => R; } | (Partial<{ [key in keyof T]: (data: Param<T, key>) => R; }> & {
+        else: (data: Param<T, keyof T>) => R;
+    }) | undefined) => void;
+    transform<R = unknown>(mapper?: Mapper<T, R>, flush?: boolean): R;
+    transformValue(data: Param<T>): unknown;
+    change: <R extends Def = Def>(other: Monad<R>, mapper?: { [key in keyof T]: (data: Param<T, key>) => Param<R, keyof R>; } | (Partial<{ [key in keyof T]: (data: Param<T, key>) => Param<R, keyof R>; }> & {
+        else: (data: Param<T, keyof T>) => Param<R, keyof R>;
     }) | undefined) => Monad<R>;
     next: (...datas: unknown[]) => void;
 }

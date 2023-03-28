@@ -17,7 +17,7 @@ describe('Typing monad ', () => {
       expecteds.push(`${input} => ${output}`);
     });
 
-    const mapper = testMonad.createMap({
+    const mapper = testMonad.createMap<string | number>({
       positive: () => 'positif',
       negative: () => 'négatif',
       boolean: () => 'booléen',
@@ -91,11 +91,19 @@ describe('Typing monad ', () => {
   });
 
   helperTest({
+    invite: 'Zero',
+    value: 0,
+    _mapped: 'nul',
+    expected: '0 => nul',
+    length: 4,
+  });
+
+  helperTest({
     invite: 'Negative Number Value',
     value: -2,
     _mapped: 'négatif',
     expected: '-2 => négatif',
-    length: 4,
+    length: 5,
   });
 
   helperTest({
@@ -103,7 +111,7 @@ describe('Typing monad ', () => {
     value: 'I believe I can fly',
     _mapped: 'string',
     expected: 'I believe I can fly => string',
-    length: 5,
+    length: 6,
   });
 
   describe('Date value', () => {
@@ -114,11 +122,11 @@ describe('Typing monad ', () => {
       expect(testMonad._mapped).toEqual('date');
     });
     test('History should have the right length', () => {
-      expect(testMonad.history).toHaveLength(6);
+      expect(testMonad.history).toHaveLength(7);
     });
     describe('The subscription :', () => {
       it('Has the right length', () => {
-        expect(expecteds).toHaveLength(6);
+        expect(expecteds).toHaveLength(7);
       });
       test('Has the right message', () => {
         const date = testMonad.current as Date;
