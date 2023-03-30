@@ -82,3 +82,7 @@ export class Monad<
 
   or = (monad: Monad<T, false>) => this.#andOr(monad, 'or');
 }
+
+export type GetPlanFromMonad<T extends Monad> = T extends Monad<infer P>
+  ? P
+  : never;

@@ -53,7 +53,7 @@ export class Interpreter<
   }
 
   get #subcribable() {
-    return this.#options?.subcribable ?? false;
+    return this.#options?.subscribable ?? false;
   }
 
   addSubscribers = (...subscribers: Subscriber[]) => {
@@ -91,7 +91,7 @@ export class Interpreter<
     return this.#mapped;
   };
 
-  next = <V>(value: unknown): PlanReturns<T, V, Merged> => {
+  next = <V>(value: V): PlanReturns<T, V, Merged> => {
     this.#current = value as unknown as T;
     const previous = this.monad.previous;
 

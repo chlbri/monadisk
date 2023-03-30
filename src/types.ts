@@ -91,7 +91,7 @@ export type LastOf<T extends ReadonlyArray<unknown>> = T['length'] extends
 
 export type Options<Merged extends boolean> = {
   keepHistory?: boolean;
-  subcribable?: boolean;
+  subscribable?: boolean;
   merged?: Merged;
 };
 
@@ -119,10 +119,7 @@ export type Params = {
   [key: string]: [any, any];
 };
 
-export type CreateMonadParams<
-  T extends Params = Params,
-  R = unknown,
-> = {
+export type CreateMonadParams<T extends Params = Params, R = unknown> = {
   options: {
     [key in keyof T]: {
       check: string;
@@ -135,7 +132,7 @@ export type CreateMonadParams<
   default?: R;
 };
 
-type GetTFromMonadParams<T extends CreateMonadParams> = T['types'];
+export type GetTFromMonadParams<T extends CreateMonadParams> = T['types'];
 
 type GetRFromMonadParams<T extends CreateMonadParams> =
   T extends CreateMonadParams<any, infer A> ? A : unknown;
@@ -168,7 +165,7 @@ type GetTransformSignature<
 
 export type CreateMonadOptions<T extends CreateMonadParams> = {
   keepHistory?: boolean;
-  subcribable?: boolean;
+  subscribable?: boolean;
   guards: {
     [key in GetCreateMonadParamsCheck<T>]: (data: unknown) => boolean;
   };
@@ -179,6 +176,26 @@ export type CreateMonadOptions<T extends CreateMonadParams> = {
   } & {
     else: (data: unknown) => GetRFromMonadParams<T>;
   };
+};
+
+export type TransformParamsToPlans<T extends CreateMonadParams> = {
+  options: {
+    [key in keyof T['options']]: {
+      check: (data: unknown) => boolean;
+      transform: GetTFromMonadParams<T> extends infer TT
+        ? TT extends undefined
+          ? (data: unknown) => GetRFromMonadParams<T>
+          : key extends keyof TT
+          ? TT[key] extends infer HT
+            ? HT extends [any, any]
+              ? (data: HT[0]) => HT[1]
+              : (data: unknown) => GetRFromMonadParams<T>
+            : (data: unknown) => GetRFromMonadParams<T>
+          : (data: unknown) => GetRFromMonadParams<T>
+        : (data: unknown) => GetRFromMonadParams<T>;
+    };
+  };
+  else: (data: unknown) => GetRFromMonadParams<T>;
 };
 
 type Params1 = {
@@ -193,10 +210,15 @@ type Params1 = {
     };
   };
   else: 'toString';
+  types: {
+    string: [string, number];
+    number: [number, number];
+  };
+  default: null;
 };
 
 type Tess = GetParentKeyFromTransform<Params1, 'toString'>;
 type TestTransform1 = GetCreateMonadParamsTransform<Params1>;
-
-type Test1 = CreateMonadOptions<Params1>;
+type Test3 = GetTFromMonadParams<Params1>;
+type Test1 = TransformParamsToPlans<Params1>;
 // #endregion
