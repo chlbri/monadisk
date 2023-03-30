@@ -148,7 +148,7 @@ type GetParentKeyFromTransform<
   K extends GetCreateMonadParamsTransform<T>,
 > = keyof SubType<T['options'], { transform: K }>;
 
-type GetTransformSignature<
+export type GetTransformSignature<
   T extends CreateMonadParams,
   K extends GetCreateMonadParamsTransform<T>,
 > = GetTFromMonadParams<T> extends infer TT
@@ -173,9 +173,8 @@ export type CreateMonadOptions<T extends CreateMonadParams> = {
     [key in GetCreateMonadParamsTransform<T>]: (
       data: GetTransformSignature<T, key>[0],
     ) => GetTransformSignature<T, key>[1];
-  } & {
-    else: (data: unknown) => GetRFromMonadParams<T>;
   };
+  else: (data: unknown) => GetRFromMonadParams<T>;
 };
 
 export type TransformParamsToPlans<T extends CreateMonadParams> = {

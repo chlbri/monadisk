@@ -1,4 +1,4 @@
-import { GetPlanFromMonad, Monad } from './Monad2';
+import { Monad } from './Monad2';
 import {
   CreateMonadOptions,
   CreateMonadParams,
@@ -40,7 +40,7 @@ export function getTransform<T extends CreateMonadParams>(
     }
 
     const transform = transforms[value];
-    if (!transform) throw new Error(`Guard "${value}" not found`);
+    if (!transform) throw new Error(`Transform "${value}" not found`);
     return transform;
   }
   if (!transforms) {
@@ -92,24 +92,3 @@ export function createMonad<T extends CreateMonadParams>(
 
   return new Monad(plan, { keepHistory, subscribable });
 }
-
-const test2 = createMonad({
-  options: {
-    string: {
-      check: 'isString',
-      transform: 'toString',
-    },
-    number: {
-      check: 'isNumber',
-      transform: 'toNumber',
-    },
-  },
-  else: 'toString',
-  types: {} as {
-    string: [string, number];
-    number: [number, number];
-  },
-  default: {} as unknown as null,
-});
-
-type Test1 = GetPlanFromMonad<typeof test2>;
