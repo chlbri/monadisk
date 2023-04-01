@@ -73,7 +73,7 @@ export function getOptions<T extends CreateMonadParams>(
   return _options;
 }
 
-export function createMonad<T extends CreateMonadParams>(
+export function createMonad<const T extends CreateMonadParams>(
   params: T,
   optionsM?: CreateMonadOptions<T>,
 ) {

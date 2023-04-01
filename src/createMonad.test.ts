@@ -89,37 +89,38 @@ describe('Strict mode', () => {
   });
 
   test('It returns error when one guard is not found', () => {
-    const params = {
-      options: {
-        string: {
-          check: 'isString',
-          transform: 'toString',
-        },
-        number: {
-          check: 'isNumber',
-          transform: 'toNumber',
-        },
-      },
-      else: 'toString',
-      types: {} as {
-        string: [string, number];
-        number: [number, number];
-      },
-      default: {} as unknown as null,
-      strict: true,
-    } as const;
-
     const monad = () =>
-      createMonad(params, {
-        guards: {
-          isString: () => true,
-        } as any,
-        transforms: {
-          toString: data => 4,
-          toNumber: data => data,
+      createMonad(
+        {
+          options: {
+            string: {
+              check: 'isString',
+              transform: 'toString',
+            },
+            number: {
+              check: 'isNumber',
+              transform: 'toNumber',
+            },
+          },
+          else: 'toString',
+          types: {} as {
+            string: [string, number];
+            number: [number, number];
+          },
+          default: {} as unknown as null,
+          strict: true,
         },
-        else: () => null,
-      });
+        {
+          guards: {
+            isString: () => true,
+          } as any,
+          transforms: {
+            toString: data => 4,
+            toNumber: data => data,
+          },
+          else: () => null,
+        },
+      );
     expect(monad).toThrowError('Guard "isNumber" not found');
   });
 });
