@@ -120,12 +120,6 @@ yarn.lock
 
 # End of https://www.toptal.com/developers/gitignore/api/node
 
-#github
-.github
-
-#husky
-.husky
-
 # dotenv environment variables file
 .env
 .env.zsh
@@ -149,8 +143,14 @@ yarn.lock
 # Gitpod
 .gitpod-config
 
+# Github
+.github
+
 #Apple
 **/.DS_Store
+
+#Protopie
+proto.pie
 
 # Settings
 .eslintignore
@@ -165,14 +165,3 @@ tests
 build.npm.js
 gitpod.temp.yml
 globals.d.ts
-
-#my
-build.npm.ts
-build.npm.js
-
-#Tests
-**/*.test.ts
-**/*.test.js
-**/*.test.jsx
-**/*.test.tsx
-**/setupTest.ts

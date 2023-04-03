@@ -22,7 +22,7 @@
       "label": "Test",
       "detail": "Testing the project",
       "runOptions": {
-        "runOn": "folderOpen"
+        "runOn": "default"
       },
       "presentation": {
         "reveal": "silent",

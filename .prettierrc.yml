@@ -1,8 +1,8 @@
+
 arrowParens: avoid
 bracketSpacing: true
 endOfLine: lf
 htmlWhitespaceSensitivity: css
-bracketSameLine: false
 printWidth: 75
 proseWrap: always
 requirePragma: false
@@ -13,6 +13,6 @@ trailingComma: all
 useTabs: false
 vueIndentScriptAndStyle: true
 overrides:
-  - files: '*.json'
+  - files: "*.json"
     options:
       proseWrap: never

@@ -196,28 +196,4 @@ export type TransformParamsToPlans<T extends CreateMonadParams> = {
   };
   else: (data: unknown) => GetRFromMonadParams<T>;
 };
-
-type Params1 = {
-  options: {
-    string: {
-      check: 'isString';
-      transform: 'toString';
-    };
-    number: {
-      check: 'isNumber';
-      transform: 'toNumber';
-    };
-  };
-  else: 'toString';
-  types: {
-    string: [string, number];
-    number: [number, number];
-  };
-  default: null;
-};
-
-type Tess = GetParentKeyFromTransform<Params1, 'toString'>;
-type TestTransform1 = GetCreateMonadParamsTransform<Params1>;
-type Test3 = GetTFromMonadParams<Params1>;
-type Test1 = TransformParamsToPlans<Params1>;
 // #endregion
