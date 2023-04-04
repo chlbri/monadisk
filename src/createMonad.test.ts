@@ -115,7 +115,7 @@ describe('Strict mode', () => {
             isString: () => true,
           } as any,
           transforms: {
-            toString: data => 4,
+            toString: () => 4,
             toNumber: data => data,
           },
           else: () => null,
