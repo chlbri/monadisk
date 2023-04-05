@@ -6,6 +6,10 @@ export class Monad<
 > {
   constructor(private _plan: T, public options?: Options<Merged>) {}
 
+  withOptions(options?: Options<Merged>) {
+    return new Monad(this.plan, { ...this.options, ...options });
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   previous?: Monad<any, boolean>;
   #addPrevious = <P extends Plans, Merged extends boolean>(

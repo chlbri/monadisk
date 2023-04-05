@@ -2,16 +2,16 @@
   "name": "@bemedev/monadisk",
   "version": "0.0.1",
   "license": "MIT",
-  "author": {
-    "name": "chlbri",
-    "email": "bri_lvi@icloud.com",
-    "url": "https://bemedev.vercel.app"
-  },
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "module": "lib/index.mjs",
   "engines": {
-    "node": ">=10"
+    "node": ">=16"
+  },
+  "author": {
+    "name": "chlbri",
+    "email": "bri_lvi@icloud.com",
+    "url": "https://bemedev.vercel.app"
   },
   "scripts": {
     "config": "pnpm install",
@@ -21,7 +21,6 @@
     "build": "rm -rf lib && pnpm run rollup",
     "test": "jest --passWithNoTests",
     "build:test": "pnpm run prepublishOnly && pnpm run test",
-    "test:watch": "vitest --passWithNoTests",
     "remove": "rm -rf node_modules pnpm-lock.yaml",
     "clean": "pnpm run remove && pnpm run config",
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",

@@ -197,3 +197,15 @@ export type TransformParamsToPlans<T extends CreateMonadParams> = {
   else: (data: unknown) => GetRFromMonadParams<T>;
 };
 // #endregion
+
+export type GetRFromPlans<T extends Plans = Plans> = T extends Plans<
+  any,
+  infer A
+>
+  ? A
+  : unknown;
+
+export type InterpreterOptions<T extends Plans = Plans> = {
+  keepHistory?: boolean;
+  subscribers?: Subscriber<unknown, GetRFromPlans<T>>[];
+};

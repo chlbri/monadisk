@@ -1,5 +1,11 @@
 import { Monad } from './Monad2';
-import { History2, PlanReturns, Plans, Subscriber } from './types';
+import {
+  GetRFromPlans,
+  History2,
+  PlanReturns,
+  Plans,
+  Subscriber,
+} from './types';
 
 export class Interpreter<
   T extends Plans = Plans,
@@ -25,15 +31,11 @@ export class Interpreter<
 
   #history: History2<T>[] = [];
   #current?: T;
-  #mapped?: unknown;
-  #subscribers: Subscriber[] = [];
+  #mapped?: any;
+  #subscribers: Subscriber<unknown, GetRFromPlans<T>>[] = [];
 
   get isUsed() {
     return this.#history.length > 0;
-  }
-
-  get current() {
-    return this.#current;
   }
 
   get history() {
@@ -56,7 +58,17 @@ export class Interpreter<
     return this.#options?.subscribable ?? false;
   }
 
-  addSubscribers = (...subscribers: Subscriber[]) => {
+  get subscribed() {
+    return this.#subscribers.length > 0;
+  }
+
+  get cached() {
+    return this.#keepHistory;
+  }
+
+  addSubscribers = (
+    ...subscribers: Subscriber<unknown, GetRFromPlans<T>>[]
+  ) => {
     if (this.#subcribable) {
       subscribers.forEach(subscriber =>
         this.#subscribers.push(subscriber),
