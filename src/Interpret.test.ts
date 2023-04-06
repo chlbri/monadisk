@@ -45,7 +45,7 @@ describe('#3 => Functionnement', () => {
       expect(actual).toBe(false);
     });
 
-    it('#2', () => {
+    it('#2 =>', () => {
       const fn = interpret(monad3);
       const actual = fn({ name: 'Google' });
 
