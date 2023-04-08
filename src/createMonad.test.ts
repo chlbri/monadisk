@@ -1,11 +1,15 @@
-import { createMonad } from './createMonad';
-import { Monad } from './Monad2';
+import {
+  createMonad,
+  DEFAULT_GUARD,
+  DEFAULT_TRANSFORM,
+} from './createMonad';
+import { Monad } from './Monad';
 
-test('The Function exists', () => {
+test('#1 => The Function exists', () => {
   expect(createMonad).toBeInstanceOf(Function);
 });
 
-test('It creates the monad', () => {
+test('#2 => It creates the monad', () => {
   const monad1 = createMonad({
     options: {
       string: {
@@ -29,7 +33,7 @@ test('It creates the monad', () => {
   expect(monad1).toBeInstanceOf(Monad);
 });
 
-describe('Strict mode', () => {
+describe('#3 => Strict mode', () => {
   test('It returns errors if no guards', () => {
     const monad1 = () =>
       createMonad({
@@ -117,10 +121,46 @@ describe('Strict mode', () => {
           transforms: {
             toString: () => 4,
             toNumber: data => data,
-          },
-          else: () => null,
+          } as any,
         },
       );
     expect(monad).toThrowError('Guard "isNumber" not found');
+  });
+});
+
+describe('#4 => Relax Mode', () => {
+  let monad: Monad;
+
+  beforeAll(() => {
+    monad = createMonad({
+      options: {
+        string: {
+          check: 'isString',
+          transform: 'toString',
+        },
+        number: {
+          check: 'isNumber',
+          transform: 'toNumber',
+        },
+      },
+      else: 'toString',
+      types: {} as {
+        string: [string, number];
+        number: [number, number];
+      },
+      default: {} as unknown as null,
+    });
+  });
+
+  test('#1 => Default guard', () => {
+    const guard = monad.plan.options.string.check;
+
+    expect(guard).toBe(DEFAULT_GUARD);
+  });
+
+  test('#2 => Default transform', () => {
+    const transform = monad.plan.options.string.transform;
+
+    expect(transform).toBe(DEFAULT_TRANSFORM);
   });
 });

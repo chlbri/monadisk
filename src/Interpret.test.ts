@@ -1,4 +1,4 @@
-import { monad1, monad2, monad3 } from './fixtures';
+import { monad1, monad12, monad13, monad2, monad3 } from './fixtures';
 import { _interpret, interpret } from './interpret';
 
 describe('#1 => Existence', () => {
@@ -51,10 +51,53 @@ describe('#3 => Functionnement', () => {
 
       expect(actual).toBe('Google');
     });
+
+    it('#3 - Else =>', () => {
+      const fn = interpret(monad3);
+      const actual = fn(true);
+
+      expect(actual).toBe(true);
+    });
   });
 
   describe('#2 => With subscribers', () => {
-    it.todo('#1 =>');
-    it.todo('#2 =>');
+    const obj = { num: 1 };
+
+    const fn = interpret(monad13, (_, transformed) => {
+      if (typeof transformed === 'number') {
+        obj.num += transformed;
+      }
+    });
+
+    it('#1 =>', () => {
+      fn(5);
+      expect(obj.num).toBe(11);
+    });
+
+    it('#2 =>', () => {
+      fn('Not subscribe');
+      expect(obj.num).toBe(11);
+    });
+
+    it('#3 =>', () => {
+      fn(6);
+      expect(obj.num).toBe(23);
+    });
+  });
+
+  describe('#3 => With previous', () => {
+    const monad = monad1.merge(monad12);
+
+    const service = interpret(monad);
+
+    it('#1 => Number', () => {
+      const actual = service(6);
+      expect(actual).toBe(48);
+    });
+
+    it('#2 => String', () => {
+      const actual = service('Lévi');
+      expect(actual).toBe("Hello Lévi, you're a nice human !!");
+    });
   });
 });

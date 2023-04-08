@@ -1,89 +1,97 @@
-import { Def, History, Mapper, Param, Subscriber } from './types';
+import { Options, Plans } from './types';
 
-export class Monad<T extends Def = Def> {
-  constructor(private def: T, public current?: unknown) {}
+export class Monad<
+  T extends Plans = Plans,
+  Merged extends boolean = false,
+> {
+  constructor(private _plan: T, public options?: Options<Merged>) {}
 
-  #history: History[] = [];
-
-  #subscribers: Subscriber<Param<T>>[] = [];
-
-  #mapper?: Mapper<T, unknown>;
-
-  #mapped: unknown;
-
-  get isUndefined() {
-    return this.current === undefined;
-  }
-
-  get _mapped() {
-    return this.#mapped;
-  }
-
-  get history() {
-    return this.#history;
-  }
-
-  #addHistory = () => {
-    const hist: History = { input: this.current, output: this.#mapped };
-    this.#history.push(hist);
-  };
-
-  #flushSubcribers = () => {
-    this.#subscribers.forEach(subscriber =>
-      subscriber(this.current, this.#mapped),
-    );
-  };
-
-  #map = <R = unknown>(mapper: Mapper<T, R>): R => {
-    const entries = Object.entries(this.def);
-    for (const [key, cond] of entries) {
-      const func = mapper[key];
-      const validated = cond(this.current);
-      if (func && validated) {
-        return func(this.current);
-      }
+  withOptions(options?: Options<Merged>) {
+    const temp = new Monad(this.plan, { ...this.options, ...options });
+    if (this.previous) {
+      temp.#addPrevious(this.previous);
     }
-    return mapper.else(this.current);
-  };
-
-  createMap = <R>(mapper: Mapper<T, R>) => mapper;
-
-  subscribe = (subscriber: Subscriber<Param<T>>) => {
-    this.#subscribers.push(subscriber);
-  };
-
-  setMapper = <R = unknown>(mapper?: Mapper<T, R>) => {
-    if (mapper) this.#mapper = mapper;
-  };
-
-  transform<R = unknown>(mapper?: Mapper<T, R>, flush = false) {
-    this.setMapper(mapper);
-    if (!this.#mapper) throw new Error('No mapper');
-    const _mapped = this.#map(this.#mapper);
-    this.#mapped = _mapped;
-    this.#addHistory();
-    flush && this.#flushSubcribers();
-    return _mapped as R;
+    return temp;
   }
 
-  transformValue(data: Param<T>) {
-    this.current = data;
-    return this.transform();
-  }
-
-  change = <R extends Def = Def>(
-    other: Monad<R>,
-    mapper?: Mapper<T, Param<R>>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  previous?: Monad<any, boolean>;
+  #addPrevious = <P extends Plans, Merged extends boolean>(
+    previous: Monad<P, Merged>,
   ) => {
-    const current = mapper ? this.#map(mapper) : other.current;
-    return new Monad<R>(other.def, current);
+    this.previous = previous;
   };
 
-  next = (...datas: unknown[]) => {
-    datas.forEach(data => {
-      this.current = data;
-      if (!this.#mapper) throw new Error('No mapper');
-      this.transform(this.#mapper, true);
-    });
+  get plan() {
+    return this._plan;
+  }
+
+  #removePrevious = () => {
+    this.previous = undefined;
   };
+
+  merge = <P extends Plans>(monad: Monad<P>) => {
+    const temp = new Monad(monad._plan, {
+      ...monad.options,
+      merged: true,
+    });
+
+    temp.#addPrevious(this);
+    return temp;
+  };
+
+  get unMerge() {
+    this.#removePrevious();
+    return this;
+  }
+
+  static #mergePlan<P extends Plans>(
+    plan1: P,
+    plan2: P,
+    type: 'and' | 'or' = 'and',
+  ) {
+    const entries = Object.entries(plan2.options);
+
+    const mergedEntries = entries.map(([key, value]) => {
+      const check2 = value.check;
+      const check1 = plan1.options[key].check;
+
+      const transform = value.transform;
+
+      const check = (data?: unknown) =>
+        type === 'and'
+          ? check1(data) && check2(data)
+          : check1(data) || check2(data);
+
+      return [key, { transform, check }] as const;
+    });
+
+    return mergedEntries.reduce((acc, [key, value]) => {
+      return { ...acc, [key]: value };
+    }, {} as P['options']);
+  }
+
+  #andOr = (monad: Monad<T, false>, type: 'and' | 'or' = 'and') => {
+    const options = Monad.#mergePlan(this._plan, monad._plan, type);
+
+    const mergedPlan = {
+      options,
+      else: monad._plan.else,
+    } as T;
+
+    const monadOptions: Options<false> = {
+      ...this.options,
+      merged: false,
+    };
+
+    return new Monad(mergedPlan, monadOptions);
+  };
+
+  and = (monad: Monad<T, false>) => this.#andOr(monad);
+
+  or = (monad: Monad<T, false>) => this.#andOr(monad, 'or');
 }
+
+export type GetPlanFromMonad<T extends Monad> = T extends Monad<infer P>
+  ? P
+  : never;

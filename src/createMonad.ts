@@ -1,12 +1,12 @@
-import { Monad } from './Monad2';
+import { Monad } from './Monad';
 import {
   CreateMonadOptions,
   CreateMonadParams,
   TransformParamsToPlans,
 } from './types';
 
-const DEFAULT_GUARD = () => true;
-const DEFAULT_TRANSFORM = <T>(data: T) => data;
+export const DEFAULT_GUARD = () => true;
+export const DEFAULT_TRANSFORM = <T>(data: T) => data;
 
 export function getGuard<T extends CreateMonadParams>(
   value: keyof CreateMonadOptions<T>['guards'],
@@ -77,13 +77,12 @@ export function createMonad<const T extends CreateMonadParams>(
   params: T,
   optionsM?: CreateMonadOptions<T>,
 ) {
-  const strict = params?.strict ?? false;
-  const keepHistory = optionsM?.keepHistory ?? false;
-  const subscribable = optionsM?.subscribable ?? false;
+  const keepHistory = optionsM?.keepHistory;
+  const subscribable = optionsM?.subscribable;
 
   const options = getOptions(params, optionsM);
 
-  const _else = getTransform('else', optionsM?.transforms, strict);
+  const _else = optionsM?.else ?? DEFAULT_TRANSFORM;
 
   const plan = {
     options,

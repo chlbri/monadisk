@@ -1,140 +1,97 @@
+import { monad1, monad12, monad13, monad2, monad3 } from './fixtures';
 import { Monad } from './Monad';
 
-describe('Typing monad ', () => {
-  const testMonad = new Monad({
-    string: (data: string) => typeof data === 'string',
-    positive: (data: number) => typeof data === 'number' && data > 0,
-    negative: (data: number) => typeof data === 'number' && data < 0,
-    zero: (data: number) => typeof data === 'number' && data === 0,
-    boolean: (data: boolean) => typeof data === 'boolean',
-    date: (data: Date) => data instanceof Date,
+describe('Merge', () => {
+  it('monad1 => monad2', () => {
+    const monad = monad1.merge(monad2);
+    expect(monad).toBeInstanceOf(Monad);
+    expect(monad.plan).toStrictEqual(monad2.plan);
+    expect(monad.previous).toEqual(monad1);
   });
 
-  const expecteds: string[] = [];
-
-  beforeAll(() => {
-    testMonad.subscribe((input, output) => {
-      expecteds.push(`${input} => ${output}`);
-    });
-
-    const mapper = testMonad.createMap<string | number>({
-      positive: () => 'positif',
-      negative: () => 'négatif',
-      boolean: () => 'booléen',
-      zero: () => 'nul',
-      string: () => 'string',
-      date: () => 'date',
-      else: () => 'inconnu',
-    });
-
-    testMonad.setMapper(mapper);
+  it('monad1 => monad3', () => {
+    const monad = monad1.merge(monad3);
+    expect(monad.plan).toStrictEqual(monad3.plan);
+    expect(monad.previous).toEqual(monad1);
   });
 
-  type Helper = {
-    invite: string;
-    value: unknown;
-    _mapped: string;
-    expected: string;
-    length: number;
-  };
+  it('monad2 => monad3', () => {
+    const monad = monad2.merge(monad3);
+    expect(monad.plan).toStrictEqual(monad3.plan);
+    expect(monad.previous).toEqual(monad2);
+  });
+});
 
-  function helperTest({
-    invite,
-    value,
-    _mapped,
-    expected,
-    length,
-  }: Helper) {
-    describe(invite, () => {
-      beforeAll(() => {
-        testMonad.next(value);
-      });
-      test('It should map the right message', () => {
-        expect(testMonad._mapped).toEqual(_mapped);
-      });
-      test('History should have the right length', () => {
-        expect(testMonad.history).toHaveLength(length);
-      });
-      describe('The subscription :', () => {
-        it('Has the right length', () => {
-          expect(expecteds).toHaveLength(length);
-        });
-        test('Has the right message', () => {
-          expect(expecteds).toContain(expected);
-        });
-      });
-    });
-  }
-
-  helperTest({
-    invite: 'Undefined Value',
-    value: undefined,
-    _mapped: 'inconnu',
-    expected: 'undefined => inconnu',
-    length: 1,
+describe('Unmerge', () => {
+  it('monad1 => monad2 => unmerge', () => {
+    const monad = monad1.merge(monad2).unMerge;
+    expect(monad.plan).toStrictEqual(monad2.plan);
+    expect(monad.previous).toBeUndefined();
   });
 
-  helperTest({
-    invite: 'Boolean Value',
-    value: true,
-    _mapped: 'booléen',
-    expected: 'true => booléen',
-    length: 2,
+  it('monad1 => monad3 => unmerge', () => {
+    const monad = monad1.merge(monad3).unMerge;
+    expect(monad.plan).toStrictEqual(monad3.plan);
+    expect(monad.previous).toBeUndefined();
   });
 
-  helperTest({
-    invite: 'Positive Number Value',
-    value: 2,
-    _mapped: 'positif',
-    expected: '2 => positif',
-    length: 3,
+  it('monad3 => monad2 => unmerge', () => {
+    const monad = monad3.merge(monad2).unMerge;
+    expect(monad.plan).toStrictEqual(monad2.plan);
+    expect(monad.previous).toBeUndefined();
+  });
+});
+
+describe('And', () => {
+  it('monad1 & monad12', () => {
+    const monad = monad1.and(monad12);
+    expect(monad.previous).toEqual(undefined);
+
+    const expect1 = monad.plan.options.number.check(20);
+    const expect2 = monad.plan.options.number.check(5);
+    expect(expect1).toEqual(true);
+    expect(expect2).toEqual(false);
   });
 
-  helperTest({
-    invite: 'Zero',
-    value: 0,
-    _mapped: 'nul',
-    expected: '0 => nul',
-    length: 4,
+  it('monad1 & monad13', () => {
+    const monad = monad1.and(monad13);
+    expect(monad.previous).toEqual(undefined);
+
+    const expect1 = monad.plan.options.string.check("It's good");
+    const expect2 = monad.plan.options.number.check(5);
+    const expect3 = monad.plan.options.number.check(20);
+    const expect4 = monad.plan.options.string.check('bad');
+    expect(expect1).toEqual(true);
+    expect(expect2).toEqual(true);
+    expect(expect3).toEqual(false);
+    expect(expect4).toEqual(false);
+  });
+});
+
+describe('Or', () => {
+  it('monad1 & monad12', () => {
+    const monad = monad1.or(monad12);
+    expect(monad.previous).toEqual(undefined);
+
+    const expect1 = monad.plan.options.number.check(20);
+    const expect2 = monad.plan.options.number.check(5);
+    expect(expect1).toEqual(true);
+    expect(expect2).toEqual(true);
   });
 
-  helperTest({
-    invite: 'Negative Number Value',
-    value: -2,
-    _mapped: 'négatif',
-    expected: '-2 => négatif',
-    length: 5,
-  });
+  it('monad1 & monad13', () => {
+    const monad = monad1.or(monad13);
+    expect(monad.previous).toEqual(undefined);
 
-  helperTest({
-    invite: 'String Litteral Value',
-    value: 'I believe I can fly',
-    _mapped: 'string',
-    expected: 'I believe I can fly => string',
-    length: 6,
-  });
-
-  describe('Date value', () => {
-    beforeAll(() => {
-      testMonad.next(new Date(2022, 8, 15, 0, 0, 0, 0));
-    });
-    test('It should map the right message', () => {
-      expect(testMonad._mapped).toEqual('date');
-    });
-    test('History should have the right length', () => {
-      expect(testMonad.history).toHaveLength(7);
-    });
-    describe('The subscription :', () => {
-      it('Has the right length', () => {
-        expect(expecteds).toHaveLength(7);
-      });
-      test('Has the right message', () => {
-        const date = testMonad.current as Date;
-        const month = date.getUTCMonth();
-        const year = date.getFullYear();
-        expect(month).toBe(8);
-        expect(year).toBe(2022);
-      });
-    });
+    const expect1 = monad.plan.options.string.check("It's good");
+    const transform1 = monad.plan.options.string.transform('It');
+    const expect2 = monad.plan.options.number.check(5);
+    const expect3 = monad.plan.options.number.check(20);
+    const expect4 = monad.plan.options.string.check('bad');
+    expect(expect1).toEqual(true);
+    expect(expect2).toEqual(true);
+    expect(expect3).toEqual(true);
+    expect(expect4).toEqual(true);
+    expect(transform1).toEqual('It is good');
   });
 });

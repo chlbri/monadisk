@@ -1,7 +1,7 @@
-import { Monad } from './Monad2';
+import { Monad } from './Monad';
 import {
   GetRFromPlans,
-  History2,
+  History,
   PlanReturns,
   Plans,
   Subscriber,
@@ -29,7 +29,7 @@ export class Interpreter<
 
   constructor(private monad: Monad<T, Merged>) {}
 
-  #history: History2<T>[] = [];
+  #history: History<T>[] = [];
   #current?: T;
   #mapped?: any;
   #subscribers: Subscriber<unknown, GetRFromPlans<T>>[] = [];
@@ -78,7 +78,7 @@ export class Interpreter<
 
   #addHistory = () => {
     if (this.#keepHistory) {
-      const hist: History2 = {
+      const hist: History = {
         input: this.#current,
         output: this.#mapped,
       };

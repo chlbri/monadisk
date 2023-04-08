@@ -1,7 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export type Def = {
-  [key: string]: (data: any) => boolean;
-};
 
 export type Plan<T = any, R = any> = {
   check: (data?: T) => boolean;
@@ -49,12 +46,7 @@ export type PlanReturns<
     : _PlanReturns<TPlans, Value>
   : ReturnTransform<TPlans>;
 
-export type Param<
-  T extends Def = Def,
-  K extends keyof T = keyof T,
-> = Parameters<T[K]>[0];
-
-export type Param2<
+export type GetParam<
   T extends Plans = Plans,
   K extends keyof T['options'] = keyof T['options'],
 > = Parameters<T['options'][K]['transform']>[0];
@@ -64,20 +56,8 @@ export type Subscriber<C = unknown, M = unknown> = (
   mapped?: M,
 ) => unknown;
 
-type _Mapper<T extends Def = Def, R = unknown> = {
-  [key in keyof T]: (data: Param<T, key>) => R;
-};
-
-export type Mapper<T extends Def = Def, R = unknown> =
-  | _Mapper<T, R>
-  | (Partial<_Mapper<T, R>> & { else: (data: Param<T>) => R });
-
-export type History<T extends Def = Def, O = unknown> = {
-  input: Param<T>;
-  output: O;
-};
-export type History2<T extends Plans = Plans, O = unknown> = {
-  input: Param2<T>;
+export type History<T extends Plans = Plans, O = unknown> = {
+  input: GetParam<T>;
   output: O;
 };
 
@@ -114,6 +94,7 @@ export type NotSubType<Base, Condition> = Omit<
   Base,
   AllowedNames<Base, Condition>
 >;
+//#endregion
 
 export type Params = {
   [key: string]: [any, any];
@@ -126,7 +107,6 @@ export type CreateMonadParams<T extends Params = Params, R = unknown> = {
       transform: string;
     };
   };
-  else: string;
   types?: T;
   strict?: boolean;
   default?: R;
@@ -141,7 +121,7 @@ type GetCreateMonadParamsCheck<T extends CreateMonadParams> =
   T['options'][keyof T['options']]['check'];
 
 type GetCreateMonadParamsTransform<T extends CreateMonadParams> =
-  T['options'][keyof T['options']]['transform'];
+  | T['options'][keyof T['options']]['transform'];
 
 type GetParentKeyFromTransform<
   T extends CreateMonadParams,
@@ -174,7 +154,7 @@ export type CreateMonadOptions<T extends CreateMonadParams> = {
       data: GetTransformSignature<T, key>[0],
     ) => GetTransformSignature<T, key>[1];
   };
-  else: (data: unknown) => GetRFromMonadParams<T>;
+  else?: (data: unknown) => GetRFromMonadParams<T>;
 };
 
 export type TransformParamsToPlans<T extends CreateMonadParams> = {
@@ -196,7 +176,6 @@ export type TransformParamsToPlans<T extends CreateMonadParams> = {
   };
   else: (data: unknown) => GetRFromMonadParams<T>;
 };
-// #endregion
 
 export type GetRFromPlans<T extends Plans = Plans> = T extends Plans<
   any,

@@ -1,5 +1,5 @@
 import { Interpreter } from './Interpreter';
-import { Monad } from './Monad2';
+import { Monad } from './Monad';
 import {
   GetRFromPlans,
   InterpreterOptions,
@@ -12,7 +12,10 @@ export function _interpret<
   Merged extends boolean = false,
 >(monad: Monad<T, Merged>, options?: InterpreterOptions<T>) {
   const interpreter = new Interpreter(
-    monad.withOptions({ keepHistory: options?.keepHistory }),
+    monad.withOptions({
+      keepHistory: options?.keepHistory,
+      subscribable: true,
+    }),
   );
   const subscribers = options?.subscribers;
   if (subscribers) {

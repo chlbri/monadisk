@@ -1,71 +1,136 @@
-const plans1 = {
-  options: {
-    string: {
-      check: data => typeof data === 'string',
-      transform: (data: string) => `Hello ${data}`,
+/* ignore file coverage */
+
+import { createMonad } from './createMonad';
+
+export const monad1 = createMonad(
+  {
+    options: {
+      string: {
+        check: 'isString',
+        transform: 'toString',
+      },
+      number: {
+        check: 'isNumber',
+        transform: 'toNumber',
+      },
     },
-    number: {
-      check: data => typeof data === 'number',
-      transform: (data: number) => data * 2,
+    types: {} as {
+      string: [string, string];
+      number: [number, number];
     },
   },
-  else: data => data,
-};
-
-const plans12 = {
-  options: {
-    string: {
-      check: data => typeof data === 'string',
-      transform: (data: string) => `Hello ${data} !!`,
-    },
-    number: {
-      check: data => data > 10,
-      transform: (data: number) => data * 4,
+  {
+    guards: {
+      isString: data => typeof data === 'string',
+      isNumber: data => typeof data === 'number',
+    } as any,
+    transforms: {
+      toString: data => `Hello ${data}`,
+      toNumber: data => data * 2,
     },
   },
-  else: data => data,
-};
+);
 
-const plans13 = {
-  options: {
-    string: {
-      check: data => typeof data === 'string' && data.length > 5,
-      transform: (data: string) => `${data} is good`,
+export const monad2 = createMonad(
+  {
+    options: {
+      boolean: {
+        check: 'isBoolean',
+        transform: 'toBoolean',
+      },
     },
-    number: {
-      check: data => typeof data === 'number' && data < 10,
-      transform: (data: number) => data * 2,
-    },
-  },
-  else: data => data,
-};
-
-const plans2 = {
-  options: {
-    boolean: {
-      check: data => typeof data === 'boolean',
-      transform: (data: boolean) => !data,
+    types: {} as {
+      boolean: [boolean, boolean];
     },
   },
-  else: data => data,
-};
-
-const plans3 = {
-  options: {
-    googObject: {
-      check: data => typeof data === 'object' && data?.name === 'Google',
-      transform: (data: { name: string }) => data.name,
+  {
+    guards: {
+      isBoolean: data => typeof data === 'boolean',
+    } as any,
+    transforms: {
+      toBoolean: data => !data,
     },
   },
-  else: data => data,
-};
+);
 
-//Write tests for Monad2 class
+export const monad3 = createMonad(
+  {
+    options: {
+      googObject: {
+        check: 'isGoogObject',
+        transform: 'toGoogObject',
+      },
+    },
+    types: {} as {
+      googObject: [{ name: string }, string];
+    },
+  },
+  {
+    guards: {
+      isGoogObject: data =>
+        typeof data === 'object' && (data as any)?.name === 'Google',
+    },
+    transforms: {
+      toGoogObject: data => data.name,
+    },
+  },
+);
 
-import { Monad } from './Monad2';
+export const monad12 = createMonad(
+  {
+    options: {
+      string: {
+        check: 'isString',
+        transform: 'toString',
+      },
+      number: {
+        check: 'isNumber',
+        transform: 'toNumber',
+      },
+    },
+    types: {} as {
+      string: [string, string];
+      number: [number, number];
+    },
+  },
+  {
+    guards: {
+      isString: data => typeof data === 'string',
+      isNumber: data => data > 10,
+    } as any,
+    transforms: {
+      toString: data => `${data}, you're a nice human !!`,
+      toNumber: data => data * 4,
+    },
+  },
+);
 
-export const monad1 = new Monad(plans1);
-export const monad2 = new Monad(plans2);
-export const monad3 = new Monad(plans3);
-export const monad12 = new Monad(plans12);
-export const monad13 = new Monad(plans13);
+export const monad13 = createMonad(
+  {
+    options: {
+      string: {
+        check: 'isString',
+        transform: 'toString',
+      },
+      number: {
+        check: 'isNumber',
+        transform: 'toNumber',
+      },
+    },
+    types: {} as {
+      string: [string, string];
+      number: [number, number];
+    },
+  },
+  {
+    guards: {
+      isString: data => typeof data === 'string' && data.length > 5,
+      isNumber: data => typeof data === 'number' && data < 10,
+    } as any,
+    transforms: {
+      toString: data => `${data} is good`,
+      toNumber: data => data * 2,
+    },
+    else: () => 'else',
+  },
+);
