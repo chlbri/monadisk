@@ -8,45 +8,54 @@ import {
 export const DEFAULT_GUARD = () => true;
 export const DEFAULT_TRANSFORM = <T>(data: T) => data;
 
-export function getGuard<T extends CreateMonadParams>(
-  value: keyof CreateMonadOptions<T>['guards'],
+function getGuard<T extends CreateMonadParams>(
+  value?: string,
   guards?: CreateMonadOptions<T>['guards'],
   strict = false,
 ) {
+  const _guards = guards as any;
   if (strict) {
-    if (!guards) {
+    if (!_guards) {
       throw new Error('No guards');
     }
 
-    const guard = guards[value];
+    if (!value) throw new Error(`Guard "${value}" not exists`);
+
+    const guard = _guards[value];
     if (!guard) throw new Error(`Guard "${value}" not found`);
     return guard;
   }
-  if (!guards) {
+  if (!_guards || !value) {
     return DEFAULT_GUARD;
   }
-  const guard = guards[value] ?? DEFAULT_GUARD;
+
+  const guard = _guards[value] ?? DEFAULT_GUARD;
   return guard;
 }
 
-export function getTransform<T extends CreateMonadParams>(
-  value: keyof CreateMonadOptions<T>['transforms'],
+function getTransform<T extends CreateMonadParams>(
+  value?: string,
   transforms?: CreateMonadOptions<T>['transforms'],
   strict = false,
 ) {
+  const _transforms = transforms as any;
   if (strict) {
-    if (!transforms) {
+    if (!_transforms) {
       throw new Error('No transforms');
     }
 
-    const transform = transforms[value];
+    if (!value) throw new Error(`Transform "${value}" not exists`);
+
+    const transform = _transforms[value];
     if (!transform) throw new Error(`Transform "${value}" not found`);
     return transform;
   }
-  if (!transforms) {
+
+  if (!_transforms || !value) {
     return DEFAULT_TRANSFORM;
   }
-  const transform = transforms[value] ?? DEFAULT_TRANSFORM;
+
+  const transform = _transforms[value] ?? DEFAULT_TRANSFORM;
   return transform;
 }
 

@@ -105,6 +105,7 @@ export type CreateMonadParams<T extends Params = Params, R = unknown> = {
     [key in keyof T]: {
       check: string;
       transform: string;
+      weight?: number;
     };
   };
   types?: T;
@@ -117,7 +118,7 @@ export type GetTFromMonadParams<T extends CreateMonadParams> = T['types'];
 type GetRFromMonadParams<T extends CreateMonadParams> =
   T extends CreateMonadParams<any, infer A> ? A : unknown;
 
-type GetCreateMonadParamsCheck<T extends CreateMonadParams> =
+export type GetCreateMonadParamsCheck<T extends CreateMonadParams> =
   T['options'][keyof T['options']]['check'];
 
 type GetCreateMonadParamsTransform<T extends CreateMonadParams> =
@@ -146,11 +147,11 @@ export type GetTransformSignature<
 export type CreateMonadOptions<T extends CreateMonadParams> = {
   keepHistory?: boolean;
   subscribable?: boolean;
-  guards: {
-    [key in GetCreateMonadParamsCheck<T>]: (data: unknown) => boolean;
+  guards?: {
+    [key in GetCreateMonadParamsCheck<T>]?: (data: unknown) => boolean;
   };
-  transforms: {
-    [key in GetCreateMonadParamsTransform<T>]: (
+  transforms?: {
+    [key in GetCreateMonadParamsTransform<T>]?: (
       data: GetTransformSignature<T, key>[0],
     ) => GetTransformSignature<T, key>[1];
   };
