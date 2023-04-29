@@ -23,7 +23,7 @@ export const monad1 = createMonad(
     guards: {
       isString: data => typeof data === 'string',
       isNumber: data => typeof data === 'number',
-    } as any,
+    },
     transforms: {
       toString: data => `Hello ${data}`,
       toNumber: data => data * 2,
@@ -46,7 +46,7 @@ export const monad2 = createMonad(
   {
     guards: {
       isBoolean: data => typeof data === 'boolean',
-    } as any,
+    },
     transforms: {
       toBoolean: data => !data,
     },
@@ -97,7 +97,7 @@ export const monad12 = createMonad(
     guards: {
       isString: data => typeof data === 'string',
       isNumber: data => data > 10,
-    } as any,
+    },
     transforms: {
       toString: data => `${data}, you're a nice human !!`,
       toNumber: data => data * 4,
@@ -126,7 +126,7 @@ export const monad13 = createMonad(
     guards: {
       isString: data => typeof data === 'string' && data.length > 5,
       isNumber: data => typeof data === 'number' && data < 10,
-    } as any,
+    },
     transforms: {
       toString: data => `${data} is good`,
       toNumber: data => data * 2,

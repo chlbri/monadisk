@@ -148,7 +148,7 @@ export type CreateMonadOptions<T extends CreateMonadParams> = {
   keepHistory?: boolean;
   subscribable?: boolean;
   guards?: {
-    [key in GetCreateMonadParamsCheck<T>]?: (data: unknown) => boolean;
+    [key in GetCreateMonadParamsCheck<T>]?: (data: any) => boolean;
   };
   transforms?: {
     [key in GetCreateMonadParamsTransform<T>]?: (
