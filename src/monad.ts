@@ -43,12 +43,8 @@ class Monad<T extends CheckerMap = CheckerMap> {
 
       if (!and) {
         func = (arg: unknown) => {
-          console.log('passe 1');
           const out1 = func1(arg);
-          if (out1 === false) {
-            console.log('passe 2');
-            return func2(arg);
-          }
+          if (out1 === false) return func2(arg);
           return out1;
         };
       }
