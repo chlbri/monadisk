@@ -1,0 +1,27 @@
+{
+  "include": ["src/**/*"],
+  "compilerOptions": {
+    "lib": ["dom", "esnext"],
+    "types": ["vitest/globals"],
+    "importHelpers": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "declaration": true,
+    "sourceMap": true,
+    "outDir": "./lib",
+    "resolveJsonModule": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "moduleResolution": "Bundler",
+    "jsx": "react",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "declarationMap": true
+  }
+}

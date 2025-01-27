@@ -1,0 +1,83 @@
+{
+  "name": "@bemedev/monadisk",
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "lib/index.cjs",
+  "typings": "lib/index.d.ts",
+  "module": "lib/index.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "type": "module",
+  "author": {
+    "name": "chlbri",
+    "email": "bri_lvi@icloud.com",
+    "url": "https://bemedev.vercel.app"
+  },
+  "files": [
+    "lib",
+    "public"
+  ],
+  "scripts": {
+    "build": "rm -rf lib && pnpm run rollup",
+    "ci": "pnpm run config:off && pnpm run lint && pnpm run test && pnpm run p-q",
+    "ci:admin": "pnpm run remove && pnpm run ci",
+    "config": "pnpm install",
+    "config:off": "pnpm install --offline",
+    "eslint": "eslint \"{src/**/*,App}.{ts,tsx}\"",
+    "lint": "pnpm run prettier && pnpm run eslint --fix",
+    "lint-watch": "onchange --await-write-finish 5500 \"**/*\" -- pnpm run lint",
+    "p-q": "pretty-quick --pattern \"**/*.*(ts|tsx)\"",
+    "prepare": "husky",
+    "prepublishOnly": "pnpm run lint && pnpm run build",
+    "pretest": "pnpm run build",
+    "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "remove": "rm -rf node_modules pnpm-lock.yaml",
+    "rinit": "pnpm run remove && pnpm run config:off",
+    "rollup": "rollup -c",
+    "size": "size-limit",
+    "test": "vitest run",
+    "test:only": "vitest run",
+    "upgrade": "pnpm update --latest"
+  },
+  "size-limit": [
+    {
+      "path": "lib/index.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "lib/index.mjs",
+      "limit": "10 KB"
+    }
+  ],
+  "devDependencies": {
+    "@bemedev/npm-publish": "0.0.1-pnpm2",
+    "@bemedev/vitest-alias": "^0.0.3",
+    "@bemedev/vitest-exclude": "^0.0.2",
+    "@bemedev/vitest-extended": "^1.1.4",
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.19.0",
+    "@size-limit/preset-small-lib": "^11.1.6",
+    "@types/node": "^22.10.10",
+    "@typescript-eslint/eslint-plugin": "^8.21.0",
+    "@typescript-eslint/parser": "^8.21.0",
+    "@vitest/coverage-v8": "^3.0.4",
+    "eslint": "^9.19.0",
+    "glob": "^11.0.1",
+    "globals": "^15.14.0",
+    "husky": "^9.1.7",
+    "onchange": "^7.1.0",
+    "prettier": "^3.4.2",
+    "pretty-quick": "^4.0.0",
+    "rollup": "^4.32.0",
+    "rollup-plugin-circular-dependencies": "^1.1.2",
+    "rollup-plugin-node-externals": "^8.0.0",
+    "rollup-plugin-tsconfig-paths": "^1.5.2",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "size-limit": "^11.1.6",
+    "tslib": "^2.8.1",
+    "typescript": "^5.7.3",
+    "valibot": "1.0.0-beta.14",
+    "vitest": "^3.0.4"
+  }
+}
