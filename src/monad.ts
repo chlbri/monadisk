@@ -1,37 +1,39 @@
 import { toSimple } from './toSimple';
-import type { Checker_F, CheckerMap } from './types';
+import type { Checker_F, CheckerMap, Merge, ToSimple } from './types';
 
-type TrueKey<T> = T extends number | string ? T : never;
-
-type Merge<
-  Prev extends CheckerMap,
-  Next extends CheckerMap,
-  AndOr extends boolean = true,
-> = {
-  [key in keyof Next as `${keyof Prev & string}${AndOr extends true ? '&' : '||'}${TrueKey<key>}`]: Next[key];
-};
-
-class Monad<T extends CheckerMap = CheckerMap> {
-  #checkers: T;
+class Monad<const T extends CheckerMap = CheckerMap> {
+  #rawCheckers: T;
+  #checkers: ToSimple<T>;
+  readonly #entries: [string, (arg: unknown) => boolean][];
+  readonly order: (keyof T)[];
 
   constructor(checkers: T) {
-    this.#checkers = checkers;
+    this.#rawCheckers = checkers;
+    this.#checkers = toSimple(checkers);
+    this.#entries = Object.entries(this.#checkers).sort(this.#sorter);
+    this.order = Object.keys(checkers);
   }
 
+  /**
+   * @deprecated
+   * Used for typings
+   */
+  readonly rawCheckers: T = undefined as any;
+
   get checkers() {
-    return toSimple(this.#checkers);
+    return this.#checkers;
   }
 
   #andOr(monad: this | T, and = true) {
     const check2 = monad instanceof Monad;
 
-    const keys = Object.keys(check2 ? monad.#checkers : monad);
+    const keys = Object.keys(check2 ? monad.#rawCheckers : monad);
 
     const out: any = {};
 
     keys.forEach(key => {
-      const func1 = this.#checkers[key];
-      const func2 = check2 ? monad.#checkers[key] : monad[key];
+      const func1 = this.#rawCheckers[key];
+      const func2 = check2 ? monad.#rawCheckers[key] : monad[key];
 
       let func = (arg: unknown) => {
         const out1 = func1(arg);
@@ -70,12 +72,15 @@ class Monad<T extends CheckerMap = CheckerMap> {
     checker: F,
   ) => {
     const checkers: T & { [key in K]: F } = {
-      ...this.#checkers,
+      ...this.#rawCheckers,
       [key]: checker,
     };
 
     return new Monad(checkers);
   };
+
+  #sorter = ([key1]: [string, any], [key2]: [string, any]) =>
+    key1.localeCompare(key2);
 
   #mergeAndOr = <U extends CheckerMap, AndOr extends boolean = true>(
     monad: Monad<U> | U,
@@ -85,8 +90,14 @@ class Monad<T extends CheckerMap = CheckerMap> {
     const check2 = monad instanceof Monad;
     const out: any = {};
 
-    const entriesThis = Object.entries(this.#checkers);
-    const entriesNext = Object.entries(check2 ? monad.#checkers : monad);
+    const entriesThis = Object.entries(this.#rawCheckers).sort(
+      this.#sorter,
+    );
+
+    const entriesNext = Object.entries(
+      check2 ? monad.#rawCheckers : monad,
+    ).sort(this.#sorter);
+
     entriesThis.forEach(([key1, func1]) => {
       entriesNext.forEach(([key2, func2]) => {
         const key = check1 ? `${key1}&${key2}` : `${key1}||${key2}`;
@@ -122,6 +133,15 @@ class Monad<T extends CheckerMap = CheckerMap> {
 
   mergeOr = <U extends CheckerMap>(monad: Monad<U> | U) => {
     return this.#mergeAndOr(monad, false);
+  };
+
+  parse = (arg: unknown) => {
+    for (const [key, func] of this.#entries) {
+      const actual = func(arg);
+      if (actual) return key;
+    }
+
+    return undefined;
   };
 }
 

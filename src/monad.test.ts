@@ -1,41 +1,12 @@
 import { createTests } from '@bemedev/vitest-extended';
-import { createCheck } from './createCheck';
-import { createMonad } from './monad';
-
-// #region Parameters
-const monad1 = createMonad({
-  string: createCheck(data => typeof data === 'string'),
-  number: createCheck(data => typeof data === 'number'),
-  45: createCheck(data => data === 45),
-});
-
-const monad2 = createMonad({
-  string: createCheck(data => typeof data === 'string'),
-  number: createCheck(data => typeof data === 'number'),
-}).add(
-  '45',
-  createCheck(data => data === 45),
-);
-
-const monad3 = monad1.or(monad2).or({
-  string: createCheck(data => typeof data === 'string'),
-  number: createCheck(data => typeof data === 'number'),
-  45: createCheck(data => data === 45),
-});
-
-const monad4 = createMonad({
-  boolean: createCheck(data => typeof data === 'boolean'),
-  exist: createCheck(data => data === 'exist'),
-});
-
-const monad5 = monad2.mergeAnd(monad4);
-const monad6 = monad2.mergeOr({
-  boolean: createCheck(data => typeof data === 'boolean'),
-  exist: createCheck(data => data === 'exist'),
-});
-
-const monad7 = monad1.and(monad2);
-// #endregion
+import {
+  monad1,
+  monad2,
+  monad3,
+  monad5,
+  monad6,
+  monad7,
+} from './fixtures';
 
 describe('#1 => Acceptation', () => {
   test('#1 => Monad1 exist', () => {

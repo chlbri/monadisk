@@ -19,8 +19,35 @@ export type CreateMonad_F = <T extends CheckerMap>(
   checkers: T,
 ) => Monad<T>;
 
-type ToSimple<T extends CheckerMap> = {
+export type ToSimple<T extends CheckerMap> = {
   [key in keyof T]: (arg: unknown) => boolean;
 };
 
+export type Add_F = <S extends string, F extends Checker_F>(
+  arg: [S, F] | { key: S; checker: F },
+) => void;
+
 export type ToSimple_F = <T extends CheckerMap>(map: T) => ToSimple<T>;
+
+type TrueKey<T> = T extends number | string ? T : never;
+
+export type Merge<
+  Prev extends CheckerMap,
+  Next extends CheckerMap,
+  AndOr extends boolean = true,
+> = {
+  [key in keyof Next as `${TrueKey<keyof Prev>}${AndOr extends true ? '&' : '||'}${TrueKey<key>}`]: Next[key];
+};
+
+export type Transform<T extends CheckerMap, Tr = any> =
+  | ({
+      [key in keyof T]?: (arg: ResultFrom<T[key]>) => Tr;
+    } & { else: (arg: unknown) => Tr })
+  | {
+      [key in keyof T]: (arg: ResultFrom<T[key]>) => Tr;
+    };
+
+export type Transform_F = <T extends CheckerMap, Tr = any>(
+  monad: Monad<T>,
+  transformers: Transform<T, Tr>,
+) => (arg: unknown) => Tr | undefined;
