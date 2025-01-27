@@ -1,0 +1,47 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "start",
+      "problemMatcher": [],
+      "label": "Start tsdx",
+      "detail": "Starting all building off tsdx",
+      "runOptions": {
+        "runOn": "default"
+      },
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "type": "npm",
+      "script": "test-watch",
+      "problemMatcher": [],
+      "label": "Test",
+      "detail": "Testing the project",
+      "runOptions": {
+        "runOn": "default"
+      },
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "type": "npm",
+      "script": "lint-watch",
+      "problemMatcher": [],
+      "label": "Linting",
+      "detail": "Lint the project",
+      "runOptions": {
+        "runOn": "default"
+      },
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      }
+    }
+  ]
+}
