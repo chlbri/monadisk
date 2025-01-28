@@ -36,7 +36,7 @@
   },
   "scripts": {
     "build": "rm -rf lib && pnpm run rollup",
-    "ci": "pnpm run config:off && pnpm run lint && pnpm run test && pnpm run p-q",
+    "ci": "pnpm run config:off && pnpm run lint && pnpm run test && pnpm run prettier && pnpm run p-q",
     "ci:admin": "pnpm run remove && pnpm run ci",
     "config": "pnpm install",
     "config:off": "pnpm install --offline",

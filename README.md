@@ -136,10 +136,10 @@ const transformer = transform(monad, {
 });
 
 // Utilisation
-console.log(transformer('hello')); // "Texte: hello"
-console.log(transformer(42)); // "Nombre: 42"
-console.log(transformer(45)); // "Nombre spécial: 45"
-console.log(transformer(true)); // "Type inconnu"
+console.log(tarnsform('hello')); // "Texte: hello"
+console.log(tarnsform(42)); // "Nombre: 42"
+console.log(tarnsform(45)); // "Nombre spécial: 45"
+console.log(tarnsform(true)); // "Type inconnu"
 ```
 
 <br/>
