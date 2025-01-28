@@ -1,9 +1,13 @@
 import { addTarball, cleanup } from '@bemedev/build-tests';
 import { this1 } from '@bemedev/build-tests/constants';
+import sh from 'shelljs';
 import { monad11 } from './fixtures';
 import type { transform as _transform } from './transform';
 
-beforeAll(addTarball);
+beforeAll(async () => {
+  sh.exec('pnpm run build');
+  await addTarball();
+});
 afterAll(cleanup);
 
 let transform = undefined as unknown as typeof _transform;

@@ -1,6 +1,7 @@
 import { createTests } from '@bemedev/vitest-extended';
 import {
   monad1,
+  monad11,
   monad2,
   monad3,
   monad5,
@@ -98,9 +99,17 @@ describe('#3 => Merge', () => {
 });
 
 describe('#4 => Miscellaneous', () => {
-  test('#1 => Order', () => {
-    const order = monad1.order;
+  describe('#1 => Order', () => {
+    test('#1 => monad1', () => {
+      const order = monad1.order;
 
-    expect(order).toStrictEqual(['string', 'number', 45]);
+      expect(order).toStrictEqual(['string', 'number', 45]);
+    });
+
+    test('#2 => monad11', () => {
+      const order = monad11.order;
+
+      expect(order).toStrictEqual([45, 'string', 'number', 'date']);
+    });
   });
 });

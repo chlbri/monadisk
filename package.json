@@ -1,10 +1,14 @@
 {
   "name": "@bemedev/monadisk",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "main": "lib/index.cjs",
   "typings": "lib/index.d.ts",
   "module": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chlbri/monadisk"
+  },
   "engines": {
     "node": ">=20"
   },
@@ -68,7 +72,6 @@
   ],
   "devDependencies": {
     "@bemedev/build-tests": "^0.1.0",
-    "@bemedev/npm-publish": "0.0.1-pnpm2",
     "@bemedev/vitest-alias": "^0.0.3",
     "@bemedev/vitest-exclude": "^0.0.2",
     "@bemedev/vitest-extended": "^1.1.4",
@@ -76,6 +79,7 @@
     "@eslint/js": "^9.19.0",
     "@size-limit/preset-small-lib": "^11.1.6",
     "@types/node": "^22.10.10",
+    "@types/shelljs": "^0.8.15",
     "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^8.21.0",
     "@vitest/coverage-v8": "^3.0.4",
@@ -91,6 +95,7 @@
     "rollup-plugin-node-externals": "^8.0.0",
     "rollup-plugin-tsconfig-paths": "^1.5.2",
     "rollup-plugin-typescript2": "^0.36.0",
+    "shelljs": "^0.8.5",
     "size-limit": "^11.1.6",
     "tslib": "^2.8.1",
     "typescript": "^5.7.3",

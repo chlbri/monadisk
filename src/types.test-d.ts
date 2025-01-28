@@ -1,4 +1,5 @@
-import type { CheckerB_F, Merge, ToSimple } from './types';
+import { monad1, monad11 } from './fixtures';
+import type { Checker_F, CheckerB_F, Merge, ToSimple } from './types';
 
 type TTM1 = Merge<
   [['ert1', any], ['ert2', any], ['ert3', any]],
@@ -21,3 +22,18 @@ type TS1 = ToSimple<[['ert1', any], ['ert2', any], ['ert3', any]]>;
 expectTypeOf<TS1>().toEqualTypeOf<
   [['ert1', CheckerB_F], ['ert2', CheckerB_F], ['ert3', CheckerB_F]]
 >();
+
+expectTypeOf(monad1.rawCheckers).toEqualTypeOf<
+  [
+    ['string', Checker_F<string>],
+    ['number', Checker_F<number>],
+    [45, Checker_F<45>],
+  ]
+>();
+
+expectTypeOf(monad11.checkers).toMatchTypeOf<{
+  45: CheckerB_F;
+  string: CheckerB_F;
+  number: CheckerB_F;
+  date: CheckerB_F;
+}>();

@@ -60,22 +60,13 @@ type _ToSimple<T extends CheckerMap> = T extends [
 
 export type ToSimple<T extends CheckerMap> = Extract<_ToSimple<T>, any[]>;
 
-export type ToSimple2<T extends CheckerMap> = T extends [
-  infer U,
-  ...infer Rest extends CheckerMap,
-]
-  ? U extends any[]
-    ? [U, ...(Rest extends CheckerMap ? ToSimple2<Rest> : [])]
-    : U extends { key: infer K; func: infer F }
-      ? [[K, F], ...(Rest extends CheckerMap ? ToSimple2<Rest> : [])]
-      : Rest extends CheckerMap
-        ? ToSimple2<Rest>
-        : []
-  : never;
-
-export type Add_F = <S extends string, F extends Checker_F>(
-  arg: [S, F] | { key: S; checker: F },
-) => void;
+export type Add_F<T extends CheckerMap> = <
+  K extends string | number,
+  F extends Checker_F,
+>(
+  key: K,
+  checker: F,
+) => Monad<[...T, [K, F]]>;
 
 export type ToSimple_F = <T extends CheckerMap>(map: T) => ToSimple<T>;
 
@@ -85,13 +76,13 @@ type TrueKey<T> = T extends number | string ? T : never;
 
 export type ToB<T extends boolean = true> = T extends true ? '&' : '||';
 
-export type Merge2<
+type Merge2<
   T extends Checker,
   U extends Checker,
   B extends boolean = true,
 > = [`${TrueKey<T[0]>}${ToB<B>}${TrueKey<U[0]>}`, U[1]];
 
-export type Merge3<
+type Merge3<
   T extends Checker,
   M extends CheckerMap,
   B extends boolean = true,
@@ -132,3 +123,6 @@ export type Transform_F = <T extends CheckerMap, Tr = any>(
   monad: Monad<T>,
   transformers: Transform<T, Tr>,
 ) => (arg: unknown) => Tr | undefined;
+
+export type RawCheckersFrom<T extends Monad<any>> = T['rawCheckers'];
+export type CheckersFrom<T extends Monad> = T['checkers'];
