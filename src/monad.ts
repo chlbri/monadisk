@@ -1,7 +1,7 @@
 import { toObject } from './toObject';
 import { toSimple } from './toSimple';
 import type {
-  Checker_F,
+  Add_F,
   CheckerMap,
   Merge,
   ToObject,
@@ -12,7 +12,7 @@ class Monad<const T extends CheckerMap = CheckerMap> {
   readonly #rawCheckers: T;
   readonly #simpleCheckers: ToSimple<T>;
   readonly #checkers: ToObject<T>;
-  readonly #order: (keyof T)[];
+  readonly #order: (keyof ToObject<T>)[];
 
   constructor(...checkers: T) {
     this.#rawCheckers = checkers;
@@ -23,7 +23,7 @@ class Monad<const T extends CheckerMap = CheckerMap> {
 
   /**
    * @deprecated
-   * Used for typings
+   * Used for typings and tests
    */
   readonly rawCheckers: T = undefined as any;
 
@@ -83,16 +83,10 @@ class Monad<const T extends CheckerMap = CheckerMap> {
     return this.#andOr(monad, true);
   };
 
-  add = <K extends string | number, F extends Checker_F>(
-    key: K,
-    checker: F,
-  ) => {
-    const checkers: [...T, [K, F]] = [
-      ...this.#rawCheckers,
-      [key, checker],
-    ];
+  add: Add_F<T> = (key, checker) => {
+    const checkers: any = [...this.#rawCheckers, [key, checker]];
 
-    return new Monad<[...T, [K, F]]>(...checkers);
+    return new Monad(...checkers);
   };
 
   #mergeAndOr = <U extends CheckerMap, AndOr extends boolean = true>(
