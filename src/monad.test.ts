@@ -96,3 +96,11 @@ describe('#3 => Merge', () => {
     });
   });
 });
+
+describe('#4 => Miscellaneous', () => {
+  test('#1 => Order', () => {
+    const order = monad1.order;
+
+    expect(order).toStrictEqual(['string', 'number', 45]);
+  });
+});
