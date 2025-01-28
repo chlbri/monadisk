@@ -142,6 +142,35 @@ console.log(transform(45)); // "Nombre spécial: 45"
 console.log(transform(true)); // "Type inconnu"
 ```
 
+<bt/>
+
+### NB: transform retuirn une erreur si le case n'est pas pris en charge
+
+```typescript
+import { createMonad, createCheck, transform } from 'monadisk';
+
+// Création d'une monade
+const monad = createMonad(
+  ['string', createCheck(data => typeof data === 'string')],
+  ['number', createCheck(data => typeof data === 'number')],
+  [45, createCheck(data => data === 45)],
+);
+
+// Création d'un transformateur
+const transformer = transform(monad, {
+  string: data => `Texte: ${data}`,
+  number: data => `Nombre: ${data}`,
+  45: data => `Nombre spécial: ${data}`,
+  // no else case
+});
+
+// Utilisation
+console.log(transform('hello')); // "Texte: hello"
+console.log(transform(42)); // "Nombre: 42"
+console.log(transform(45)); // "Nombre spécial: 45"
+console.log(transform(true)); // Will throws error `Case for "true" is not handled`
+```
+
 <br/>
 
 ## Licence
@@ -156,6 +185,13 @@ MIT
 <summary>
 ...
 </summary>
+
+### Version [0.0.4] --> _2025/01/28 11:10_
+
+- La fonction `transform` génère une erreur si le cas n'est pas pris en
+  charge
+
+<br/>
 
 ### Version [0.0.3] --> _2025/01/28 11:10_
 

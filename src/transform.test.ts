@@ -1,8 +1,8 @@
 import { createTests } from '@bemedev/vitest-extended';
-import { monad10, monad11, monad9 } from './fixtures';
+import { date, monad10, monad11, monad9 } from './fixtures';
 import { transform } from './transform';
 
-describe('#1 => Simple Right sort', () => {
+describe('#1 => Simple right sort', () => {
   const transformer2 = transform(monad11, {
     45: data => `Builded with right "${data}"`,
     string: data => `Builded with "${data}"`,
@@ -31,7 +31,7 @@ describe('#1 => Simple Right sort', () => {
     {
       invite: 'boolean',
       parameters: true,
-      expected: undefined,
+      expected: 'Make it else',
     },
     {
       invite: 'Date',
@@ -41,7 +41,7 @@ describe('#1 => Simple Right sort', () => {
   )();
 });
 
-describe('#2 => Simple Wrong sort', () => {
+describe('#2 => Simple wrong sort', () => {
   const transformer2 = transform(monad9, {
     strict45: data => `Builded with right "${data}"`,
     string: data => `Builded with "${data}"`,
@@ -100,8 +100,61 @@ describe('#3 => Merge', () => {
       {
         invite: 'other',
         parameters: 34,
-        expected: undefined,
+        expected: 'Not found',
       },
     )();
   });
+});
+
+describe('#4 => With errors', () => {
+  const transformer11 = transform(monad11, {
+    45: data => `Builded with right "${data}"`,
+    string: data => `Builded with "${data}"`,
+    number: data => `Builded with "${data}"`,
+    date: data => `Builded with "${data.getUTCFullYear()}"`,
+  });
+
+  const { success, fails } = createTests(transformer11);
+
+  describe(
+    '#1 => Errors',
+    fails(
+      {
+        invite: 'Boolean - true',
+        parameters: true,
+        error: `Case for "true" is not handled`,
+      },
+      {
+        invite: 'Boolean - false',
+        parameters: false,
+        error: `Case for "false" is not handled`,
+      },
+    ),
+  );
+
+  describe(
+    '#2 => Success',
+    success(
+      {
+        invite: 'string',
+        parameters: 'string',
+        expected: 'Builded with "string"',
+      },
+      {
+        invite: '64',
+        parameters: 64,
+        expected: 'Builded with "64"',
+      },
+      {
+        invite: '45',
+        parameters: 45,
+        expected: 'Builded with right "45"',
+      },
+      {
+        invite: 'date',
+        parameters: date,
+        expected: 'Builded with "2022"',
+      },
+    ),
+  );
 });

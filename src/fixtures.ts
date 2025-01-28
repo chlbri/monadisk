@@ -1,7 +1,7 @@
 import { createCheck } from './createCheck';
 import { createMonad } from './monad';
 
-// #region Parameters
+// #region Parameters (monad)
 export const monad1 = createMonad(
   ['string', createCheck(data => typeof data === 'string')],
   ['number', createCheck(data => typeof data === 'number')],
@@ -58,3 +58,5 @@ export const monad10 = monad11.mergeAnd([
   ['exist', createCheck(data => data === 'exist')],
 ]);
 // #endregion
+
+export const date = new Date('2022-03-25');

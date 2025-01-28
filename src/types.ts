@@ -27,12 +27,25 @@ export type ToObject<T extends CheckerMap> = T extends [
     } & (Rest['length'] extends 0 ? {} : ToObject<Rest>)
   : {};
 
+type ToObject2<T extends CheckerMap> = T extends [
+  infer U extends Checker,
+  ...infer Rest extends CheckerMap,
+]
+  ? {
+      [key in U[0]]: U[1];
+    } & (Rest['length'] extends 0 ? {} : ToObject2<Rest>)
+  : {};
+
 export type ToObject_F = <const T extends CheckerMap>(
   ...map: T
 ) => ToObject<T>;
 
 export type ResultFrom<T> =
-  ReturnType<Extract<T, Fn>> extends { value: infer R } ? R : never;
+  ReturnType<Extract<T, Fn>> extends
+    | { value: infer R; check: true }
+    | false
+    ? R
+    : never;
 
 export type CreateMonad_F = <T extends CheckerMap>(
   checkers: T,
@@ -110,19 +123,19 @@ export type Merge<
 export type Transform<
   C extends CheckerMap,
   Tr = any,
-  T extends ToObject<C> = ToObject<C>,
+  T extends ToObject2<C> = ToObject2<C>,
 > =
   | ({
       [key in keyof T]?: (arg: ResultFrom<T[key]>) => Tr;
     } & { else: (arg: unknown) => Tr })
-  | {
+  | ({
       [key in keyof T]: (arg: ResultFrom<T[key]>) => Tr;
-    };
+    } & { else?: (arg: unknown) => Tr });
 
-export type Transform_F = <T extends CheckerMap, Tr = any>(
+export type Transform_F = <const T extends CheckerMap, Tr = any>(
   monad: Monad<T>,
   transformers: Transform<T, Tr>,
-) => (arg: unknown) => Tr | undefined;
+) => (arg: unknown) => Tr;
 
 export type RawCheckersFrom<T extends Monad<any>> = T['rawCheckers'];
 export type CheckersFrom<T extends Monad> = T['checkers'];
