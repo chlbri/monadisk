@@ -8,9 +8,7 @@ beforeAll(async () => {
   sh.exec('pnpm run build');
   await addTarball();
 });
-afterAll(() => {
-  cleanup();
-});
+afterAll(cleanup);
 
 let transform = undefined as unknown as typeof _transform;
 
