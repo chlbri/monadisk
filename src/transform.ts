@@ -11,7 +11,11 @@ export const transform: Transform_F = (monad, transformers) => {
       if (func) return func(arg as any);
       return (transformers as any).else(arg as any);
     }
+    const _else = (transformers as any).else;
+    if (_else) {
+      return _else(arg);
+    }
 
-    return undefined;
+    throw new Error(`Case for "${arg}" is not handled`);
   };
 };

@@ -1,8 +1,7 @@
 import { addTarball, cleanup } from '@bemedev/build-tests';
-import { this1 } from '@bemedev/build-tests/constants';
+import { createTests } from '@bemedev/vitest-extended';
 import sh from 'shelljs';
-import { monad11 } from './fixtures';
-import type { transform as _transform } from './transform';
+import { buildTransform, date, monad11 } from './fixtures';
 
 beforeAll(async () => {
   sh.exec('pnpm run build');
@@ -10,25 +9,63 @@ beforeAll(async () => {
 });
 afterAll(cleanup);
 
-let transform = undefined as unknown as typeof _transform;
+describe('#1 => Simple right sort', () => {
+  //@ts-expect-error For test
+  const transformer2: (arg: unknown) => string = undefined;
 
-beforeAll(async () => {
-  transform = await import(this1).then(({ transform }) => transform);
-});
+  const { success, fails } = createTests.withImplementation(transformer2, {
+    name: 'transformer2',
+    async instanciation() {
+      const transform = await buildTransform();
 
-describe('#1 => Simple Right sort', () => {
-  test('#1 => Simple Right sort', async () => {
-    const transformer2 = transform(monad11, {
-      45: data => `Builded with right "${data}"`,
-      string: data => `Builded with "${data}"`,
-      number: data => `Builded with "${data}"`,
-      else: () => 'Make it else',
-    });
-
-    expect(transformer2('string')).toBe('Builded with "string"');
-    expect(transformer2(64)).toBe('Builded with "64"');
-    expect(transformer2(45)).toBe('Builded with right "45"');
-    expect(transformer2(true)).toBeUndefined();
-    expect(transformer2(new Date())).toBe('Make it else');
+      return transform(monad11, {
+        45: data => `Builded with right "${data}"`,
+        string: data => `Builded with "${data}"`,
+        number: data => `Builded with "${data}"`,
+        date: data => `Builded with "${data.getUTCFullYear()}"`,
+      });
+    },
   });
+
+  describe(
+    '#1 => Errors',
+    fails(
+      {
+        invite: 'Boolean - true',
+        parameters: true,
+        error: `Case for "true" is not handled`,
+      },
+      {
+        invite: 'Boolean - false',
+        parameters: false,
+        error: `Case for "false" is not handled`,
+      },
+    ),
+  );
+
+  describe(
+    '#2 => Success',
+    success(
+      {
+        invite: 'string',
+        parameters: 'string',
+        expected: 'Builded with "string"',
+      },
+      {
+        invite: '64',
+        parameters: 64,
+        expected: 'Builded with "64"',
+      },
+      {
+        invite: '45',
+        parameters: 45,
+        expected: 'Builded with right "45"',
+      },
+      {
+        invite: 'date',
+        parameters: date,
+        expected: 'Builded with "2022"',
+      },
+    ),
+  );
 });

@@ -1,21 +1,9 @@
 import { createTests } from '@bemedev/vitest-extended';
-import { buildCreateCheck, funcT, useBuild } from './fixtures';
-
-useBuild();
+import { createCheck } from './createCheck';
 
 describe('#1 => For string', () => {
   const funcS = (arg: unknown) => typeof arg === 'string';
-
-  const { success, acceptation } = createTests.withImplementation(
-    funcT(),
-    {
-      name: 'funcS',
-      instanciation: async () => {
-        const createCheck = await buildCreateCheck();
-        return createCheck(funcS);
-      },
-    },
-  );
+  const { success, acceptation } = createTests(createCheck(funcS));
 
   describe('#0 => Acceptation', acceptation);
 
@@ -43,17 +31,7 @@ describe('#1 => For string', () => {
 
 describe('#2 => For boolean', () => {
   const funcB = (arg: unknown) => typeof arg === 'boolean';
-
-  const { success, acceptation } = createTests.withImplementation(
-    funcT(),
-    {
-      name: 'funcB',
-      instanciation: async () => {
-        const createCheck = await buildCreateCheck();
-        return createCheck(funcB);
-      },
-    },
-  );
+  const { success, acceptation } = createTests(createCheck(funcB));
 
   describe('#0 => Acceptation', acceptation);
 
@@ -81,17 +59,7 @@ describe('#2 => For boolean', () => {
 
 describe('#1 => For number', () => {
   const funcN = (arg: unknown) => typeof arg === 'number';
-
-  const { success, acceptation } = createTests.withImplementation(
-    funcT(),
-    {
-      name: 'funcN',
-      instanciation: async () => {
-        const createCheck = await buildCreateCheck();
-        return createCheck(funcN);
-      },
-    },
-  );
+  const { success, acceptation } = createTests(createCheck(funcN));
 
   describe('#0 => Acceptation', acceptation);
 

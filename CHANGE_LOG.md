@@ -1,5 +1,19 @@
 ## CHANGELOG
 
+### Version [0.0.5] --> _2025/01/28 13:10_
+
+- Upgrade deps
+- Better testing (100% coverage)
+
+<br/>
+
+### Version [0.0.4] --> _2025/01/28 11:10_
+
+- La fonction `transform` génère une erreur si le cas n'est pas pris en
+  charge
+
+<br/>
+
 ### Version [0.0.3] --> _2025/01/28 11:10_
 
 - 🐛 Correction des fautes de frappe dans les exemples
