@@ -11,9 +11,6 @@ importers:
       '@bemedev/build-tests':
         specifier: ^0.1.0
         version: 0.1.0(vitest@3.0.4(@types/node@22.10.10)(jiti@2.4.2))
-      '@bemedev/npm-publish':
-        specifier: 0.0.1-pnpm2
-        version: 0.0.1-pnpm2
       '@bemedev/vitest-alias':
         specifier: ^0.0.3
         version: 0.0.3(vitest@3.0.4(@types/node@22.10.10)(jiti@2.4.2))
@@ -35,6 +32,9 @@ importers:
       '@types/node':
         specifier: ^22.10.10
         version: 22.10.10
+      '@types/shelljs':
+        specifier: ^0.8.15
+        version: 0.8.15
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.21.0
         version: 8.22.0(@typescript-eslint/parser@8.22.0(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.3))(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.3)
@@ -80,6 +80,9 @@ importers:
       rollup-plugin-typescript2:
         specifier: ^0.36.0
         version: 0.36.0(rollup@4.32.0)(typescript@5.7.3)
+      shelljs:
+        specifier: ^0.8.5
+        version: 0.8.5
       size-limit:
         specifier: ^11.1.6
         version: 11.1.6
@@ -129,9 +132,6 @@ packages:
     hasBin: true
     peerDependencies:
       vitest: ^2.1.8
-
-  '@bemedev/npm-publish@0.0.1-pnpm2':
-    resolution: {integrity: sha512-dC5w4It5uiLHhxSRjvQpfaZ10Gzq9YrDM3AWJSPtX6eD410S6MR27a/Y05iMg539SmK1PRFPt78dFv7F7SOtUw==}
 
   '@bemedev/sleep@0.1.2':
     resolution: {integrity: sha512-GLbDKkDqPdbO1WldnXZs6Wi1Fhk6lfz2DhCEPWSiezhRym9IMvksyaqdfQyyWvYg3OS1umKjaHOAiEF6++HiTA==}
@@ -530,11 +530,20 @@ packages:
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
+  '@types/glob@7.2.0':
+    resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
+
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
+  '@types/minimatch@5.1.2':
+    resolution: {integrity: sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA==}
+
   '@types/node@22.10.10':
     resolution: {integrity: sha512-X47y/mPNzxviAGY5TcYPtYL8JsY3kAq2n8fMmKoRCxq/c4v4pyGNCzM2R6+M5/umG4ZfHuT+sgqDYqWc9rJ6ww==}
+
+  '@types/shelljs@0.8.15':
+    resolution: {integrity: sha512-vzmnCHl6hViPu9GNLQJ+DZFd6BQI2DBTUeOvYHqkWQLMfKAAQYMb/xAmZkTogZI/vqXHCWkqDRymDI5p0QTi5Q==}
 
   '@typescript-eslint/eslint-plugin@8.22.0':
     resolution: {integrity: sha512-4Uta6REnz/xEJMvwf72wdUnC3rr4jAQf5jnTkeRQ9b6soxLxhDEbS/pfMPoJLDfFPNVRdryqWUIV/2GZzDJFZw==}
@@ -755,10 +764,6 @@ packages:
 
   didyoumean@1.2.2:
     resolution: {integrity: sha512-gxtyfqMg7GKyhQmb056K7M3xszy/myH8w+B4RT+QXBQsvAOdc3XymqDDPHx1BgPgsdAA5SIifona89YtRATDzw==}
-
-  dotenv@16.4.7:
-    resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
-    engines: {node: '>=12'}
 
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
@@ -1678,12 +1683,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@bemedev/npm-publish@0.0.1-pnpm2':
-    dependencies:
-      dotenv: 16.4.7
-      edit-json-file: 1.8.0
-      shelljs: 0.8.5
-
   '@bemedev/sleep@0.1.2': {}
 
   '@bemedev/types@0.1.3': {}
@@ -1960,11 +1959,23 @@ snapshots:
 
   '@types/estree@1.0.6': {}
 
+  '@types/glob@7.2.0':
+    dependencies:
+      '@types/minimatch': 5.1.2
+      '@types/node': 22.10.10
+
   '@types/json-schema@7.0.15': {}
+
+  '@types/minimatch@5.1.2': {}
 
   '@types/node@22.10.10':
     dependencies:
       undici-types: 6.20.0
+
+  '@types/shelljs@0.8.15':
+    dependencies:
+      '@types/glob': 7.2.0
+      '@types/node': 22.10.10
 
   '@typescript-eslint/eslint-plugin@8.22.0(@typescript-eslint/parser@8.22.0(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.3))(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.3)':
     dependencies:
@@ -2225,8 +2236,6 @@ snapshots:
   deep-is@0.1.4: {}
 
   didyoumean@1.2.2: {}
-
-  dotenv@16.4.7: {}
 
   eastasianwidth@0.2.0: {}
 
