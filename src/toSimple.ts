@@ -1,17 +1,24 @@
-import type { ToSimple_F } from './types';
+import type { ToSimple_F, ToSimpleOne_F } from './types';
 
-export const toSimple: ToSimple_F = map => {
-  const out: any = {};
-  const entries = Object.entries(map);
+export const toSimpleOne: ToSimpleOne_F = func => {
+  const fn = (arg: unknown) => {
+    const out1 = func(arg);
+    if (out1 === false) return false;
+
+    return out1.check;
+  };
+
+  return fn;
+};
+
+export const toSimple: ToSimple_F = entries => {
+  const out: any[] = [];
 
   entries.forEach(([key, func]) => {
-    out[key] = (arg: unknown) => {
-      const out1 = func(arg);
-      if (out1 === false) return false;
+    const fn = toSimpleOne(func);
 
-      return out1.check;
-    };
+    out.push([key, fn]);
   });
 
-  return out;
+  return out as any;
 };

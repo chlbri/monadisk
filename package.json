@@ -18,6 +18,22 @@
     "lib",
     "public"
   ],
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js",
+      "node": "./lib/index.cjs",
+      "require": "./lib/index.cjs",
+      "default": "./lib/index.js"
+    },
+    "./*": {
+      "types": "./lib/*.ts",
+      "import": "./lib/*.js",
+      "node": "./lib/*.cjs",
+      "require": "./lib/*.cjs",
+      "default": "./lib/*.js"
+    }
+  },
   "scripts": {
     "build": "rm -rf lib && pnpm run rollup",
     "ci": "pnpm run config:off && pnpm run lint && pnpm run test && pnpm run p-q",
@@ -51,6 +67,7 @@
     }
   ],
   "devDependencies": {
+    "@bemedev/build-tests": "^0.1.0",
     "@bemedev/npm-publish": "0.0.1-pnpm2",
     "@bemedev/vitest-alias": "^0.0.3",
     "@bemedev/vitest-exclude": "^0.0.2",

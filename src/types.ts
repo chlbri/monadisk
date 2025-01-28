@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import type { Monad } from './monad';
 
 export type Result<T = any> = { check: true; value: T } | false;
 
+export type CheckerB_F = (arg: unknown) => boolean;
 export type Checker_F<T = any> = (arg: unknown) => Result<T>;
 
 export type CheckerA<T> =
@@ -10,18 +12,66 @@ export type CheckerA<T> =
 
 export type CreateCheck_F = <T = any>(fn: CheckerA<T>) => Checker_F<T>;
 
-export type CheckerMap = Record<string | number, Checker_F>;
+type Fn = (...args: any[]) => any;
 
-export type ResultFrom<T extends Checker_F> =
-  ReturnType<T> extends { value: infer R } ? R : never;
+export type Checker = [string | number, Checker_F];
+
+export type CheckerMap = Checker[];
+
+export type ToObject<T extends CheckerMap> = T extends [
+  infer U extends Checker,
+  ...infer Rest extends CheckerMap,
+]
+  ? {
+      [key in U[0]]: CheckerB_F;
+    } & (Rest['length'] extends 0 ? {} : ToObject<Rest>)
+  : {};
+
+export type ToObject_F = <const T extends CheckerMap>(
+  ...map: T
+) => ToObject<T>;
+
+export type ResultFrom<T> =
+  ReturnType<Extract<T, Fn>> extends { value: infer R } ? R : never;
 
 export type CreateMonad_F = <T extends CheckerMap>(
   checkers: T,
 ) => Monad<T>;
 
-export type ToSimple<T extends CheckerMap> = {
-  [key in keyof T]: (arg: unknown) => boolean;
-};
+export type ToRawFunction_F = <T>(
+  arg: [string, Checker_F<T>],
+) => Checker_F<T>;
+
+export type ToKey_F = (arg: [string, Fn]) => string;
+
+export type ToFunction_F = (
+  arg: [string, (arg: unknown) => boolean],
+) => (arg: unknown) => boolean;
+
+type _ToSimple<T extends CheckerMap> = T extends [
+  infer U extends Checker,
+  ...infer Rest extends CheckerMap,
+]
+  ? [
+      [U[0], CheckerB_F],
+      ...(Rest['length'] extends 0 ? [] : _ToSimple<Rest>),
+    ]
+  : never;
+
+export type ToSimple<T extends CheckerMap> = Extract<_ToSimple<T>, any[]>;
+
+export type ToSimple2<T extends CheckerMap> = T extends [
+  infer U,
+  ...infer Rest extends CheckerMap,
+]
+  ? U extends any[]
+    ? [U, ...(Rest extends CheckerMap ? ToSimple2<Rest> : [])]
+    : U extends { key: infer K; func: infer F }
+      ? [[K, F], ...(Rest extends CheckerMap ? ToSimple2<Rest> : [])]
+      : Rest extends CheckerMap
+        ? ToSimple2<Rest>
+        : []
+  : never;
 
 export type Add_F = <S extends string, F extends Checker_F>(
   arg: [S, F] | { key: S; checker: F },
@@ -29,17 +79,48 @@ export type Add_F = <S extends string, F extends Checker_F>(
 
 export type ToSimple_F = <T extends CheckerMap>(map: T) => ToSimple<T>;
 
+export type ToSimpleOne_F = (fn: Checker_F) => CheckerB_F;
+
 type TrueKey<T> = T extends number | string ? T : never;
+
+export type ToB<T extends boolean = true> = T extends true ? '&' : '||';
+
+export type Merge2<
+  T extends Checker,
+  U extends Checker,
+  B extends boolean = true,
+> = [`${TrueKey<T[0]>}${ToB<B>}${TrueKey<U[0]>}`, U[1]];
+
+export type Merge3<
+  T extends Checker,
+  M extends CheckerMap,
+  B extends boolean = true,
+> = M extends [infer U extends Checker, ...infer Rest extends CheckerMap]
+  ? [
+      Merge2<T, U, B>,
+      ...(Rest['length'] extends 0 ? [] : Merge3<T, Rest, B>),
+    ]
+  : never;
 
 export type Merge<
   Prev extends CheckerMap,
   Next extends CheckerMap,
-  AndOr extends boolean = true,
-> = {
-  [key in keyof Next as `${TrueKey<keyof Prev>}${AndOr extends true ? '&' : '||'}${TrueKey<key>}`]: Next[key];
-};
+  B extends boolean = true,
+> = Prev extends [
+  infer U1 extends Checker,
+  ...infer Rest extends CheckerMap,
+]
+  ? [
+      ...Merge3<U1, Next, B>,
+      ...(Rest['length'] extends 0 ? [] : Merge<Rest, Next>),
+    ]
+  : never;
 
-export type Transform<T extends CheckerMap, Tr = any> =
+export type Transform<
+  C extends CheckerMap,
+  Tr = any,
+  T extends ToObject<C> = ToObject<C>,
+> =
   | ({
       [key in keyof T]?: (arg: ResultFrom<T[key]>) => Tr;
     } & { else: (arg: unknown) => Tr })

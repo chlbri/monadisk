@@ -6,10 +6,10 @@ export const transform: Transform_F = (monad, transformers) => {
     const check1 = key !== undefined;
 
     if (check1) {
-      const func = transformers[key];
+      const func = (transformers as any)[key];
 
       if (func) return func(arg as any);
-      return transformers.else(arg as any);
+      return (transformers as any).else(arg as any);
     }
 
     return undefined;

@@ -1,23 +1,13 @@
 import { createTests } from '@bemedev/vitest-extended';
-import {
-  monad1,
-  monad10,
-  monad2,
-  monad6,
-  monad8,
-  monad9,
-} from './fixtures';
+import { monad10, monad11, monad9 } from './fixtures';
 import { transform } from './transform';
 
 describe('#1 => Simple Right sort', () => {
-  const transformer2 = transform(monad2, {
+  const transformer2 = transform(monad11, {
     45: data => `Builded with right "${data}"`,
     string: data => `Builded with "${data}"`,
     number: data => `Builded with "${data}"`,
-  });
-
-  test('fdfd', () => {
-    console.log(monad1.parse(45));
+    else: () => 'Make it else',
   });
 
   const { success } = createTests(transformer2);
@@ -38,6 +28,16 @@ describe('#1 => Simple Right sort', () => {
       parameters: 45,
       expected: 'Builded with right "45"',
     },
+    {
+      invite: 'boolean',
+      parameters: true,
+      expected: undefined,
+    },
+    {
+      invite: 'Date',
+      parameters: new Date(),
+      expected: 'Make it else',
+    },
   )();
 });
 
@@ -46,10 +46,6 @@ describe('#2 => Simple Wrong sort', () => {
     strict45: data => `Builded with right "${data}"`,
     string: data => `Builded with "${data}"`,
     number: data => `Builded with "${data}"`,
-  });
-
-  test('fdfd', () => {
-    console.log(monad1.parse(45));
   });
 
   const { success } = createTests(transformer2);
@@ -80,18 +76,7 @@ describe('#3 => Merge', () => {
       'number&64': data => `Builded with number&64 "${data}"`,
       '45&45': data => `Builded with 45&45 "${data}"`,
       'number&45': data => `Builded with number&45 "${data}"`,
-
       else: () => 'Not found',
-    });
-
-    test('#0 => Console.log', () => {
-      console.log('monad10', '=>', JSON.stringify(monad10.order, null, 2));
-      console.log();
-      console.log('monad8', '=>', JSON.stringify(monad8.order, null, 2));
-      console.log();
-      console.log('monad9', '=>', JSON.stringify(monad9.order, null, 2));
-      console.log();
-      console.log('monad6', '=>', JSON.stringify(monad6.order, null, 2));
     });
 
     const { success } = createTests(transformer5);
@@ -104,11 +89,6 @@ describe('#3 => Merge', () => {
       },
       {
         invite: '45&45',
-        parameters: 45,
-        expected: `Builded with 45&45 "45"`,
-      },
-      {
-        invite: 'number&45',
         parameters: 45,
         expected: `Builded with 45&45 "45"`,
       },

@@ -6,6 +6,7 @@ import {
   monad5,
   monad6,
   monad7,
+  monad8,
 } from './fixtures';
 
 describe('#1 => Acceptation', () => {
@@ -20,7 +21,7 @@ describe('#1 => Acceptation', () => {
     );
     describe(
       '#2 => number',
-      createTests(monad2.checkers.number).acceptation,
+      createTests(monad8.checkers.number).acceptation,
     );
     describe('#1 => 45', createTests(monad3.checkers[45]).acceptation);
   });

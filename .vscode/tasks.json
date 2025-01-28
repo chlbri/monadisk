@@ -1,46 +1,87 @@
+//Create task to start npm build at the opening
 {
   "version": "2.0.0",
   "tasks": [
     {
-      "type": "npm",
-      "script": "start",
-      "problemMatcher": [],
-      "label": "Start tsdx",
-      "detail": "Starting all building off tsdx",
-      "runOptions": {
-        "runOn": "default"
-      },
+      "label": "pull",
+      "type": "shell",
+      "command": "git pull",
       "presentation": {
-        "reveal": "silent",
-        "panel": "dedicated"
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "clear": false,
+        "close": true
+      },
+      "hide": true,
+      "runOptions": {
+        "runOn": "folderOpen",
+        "instanceLimit": 1
       }
     },
     {
+      "label": "pnpm:install",
       "type": "npm",
-      "script": "test-watch",
-      "problemMatcher": [],
-      "label": "Test",
-      "detail": "Testing the project",
-      "runOptions": {
-        "runOn": "default"
-      },
       "presentation": {
-        "reveal": "silent",
-        "panel": "dedicated"
+        "echo": true,
+        "reveal": "never",
+        "focus": false,
+        "panel": "shared",
+        "clear": false,
+        "close": true
+      },
+      "script": "config:off",
+      "isBackground": true,
+      "detail": "Install deps",
+      "hide": true,
+      "dependsOn": "pull",
+      "runOptions": {
+        "runOn": "folderOpen",
+        "instanceLimit": 1
       }
     },
     {
+      "label": "pnpm:lint",
       "type": "npm",
-      "script": "lint-watch",
-      "problemMatcher": [],
-      "label": "Linting",
-      "detail": "Lint the project",
-      "runOptions": {
-        "runOn": "default"
-      },
       "presentation": {
+        "echo": true,
         "reveal": "silent",
-        "panel": "dedicated"
+        "focus": false,
+        "panel": "new",
+        "clear": true,
+        "close": true
+      },
+      "script": "lint",
+      "isBackground": false,
+      "hide": true,
+      "detail": "Lint the package",
+      "dependsOn": "pnpm:install",
+      "runOptions": {
+        "runOn": "folderOpen",
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "pnpm:test",
+      "type": "npm",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "group": "test",
+        "clear": true,
+        "close": true
+      },
+      "group": "test",
+      "script": "test",
+      "isBackground": false,
+      "detail": "Test the package",
+      "dependsOn": "pnpm:lint",
+      "runOptions": {
+        "runOn": "folderOpen",
+        "instanceLimit": 1
       }
     }
   ]
