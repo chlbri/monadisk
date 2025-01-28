@@ -182,6 +182,7 @@ MIT
 ## CHANGE_LOG
 
 <details>
+
 <summary>
 ...
 </summary>
@@ -227,6 +228,7 @@ MIT
   monades complexes
   - Amélioration de la documentation des méthodes `mergeAnd` et `mergeOr`
   - Optimisation des performances pour les opérations de fusion
+
 
 </details>
 
