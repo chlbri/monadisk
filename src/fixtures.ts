@@ -1,5 +1,16 @@
+import { addTarball, cleanup } from '@bemedev/build-tests';
+import { this1 } from '@bemedev/build-tests/constants';
+import { t } from '@bemedev/types';
+import { exec } from 'shelljs';
 import { createCheck } from './createCheck';
 import { createMonad } from './monad';
+import type {
+  Checker_F,
+  CreateCheck_F,
+  ToObject_F,
+  ToSimple_F,
+  Transform_F,
+} from './types';
 
 // #region Parameters (monad)
 export const monad1 = createMonad(
@@ -60,3 +71,32 @@ export const monad10 = monad11.mergeAnd([
 // #endregion
 
 export const date = new Date('2022-03-25');
+
+// #region Built Functions
+export const funcT = <T>() => t.anify<Checker_F<T>>();
+type BuildTransform_F = () => Promise<Transform_F>;
+export const buildTransform: BuildTransform_F = () =>
+  import(`${this1}/transform`).then(({ transform }) => transform);
+
+type BuildCreateCheck_F = () => Promise<CreateCheck_F>;
+export const buildCreateCheck: BuildCreateCheck_F = () =>
+  import(`${this1}/createCheck`).then(({ createCheck }) => createCheck);
+
+type BuildToSimple_F = () => Promise<ToSimple_F>;
+export const buildToSimple: BuildToSimple_F = () =>
+  import(`${this1}/toSimple`).then(({ toSimple }) => toSimple);
+
+type BuildToObject_F = () => Promise<ToObject_F>;
+export const buildToObject: BuildToObject_F = () =>
+  import(`${this1}/toObject`).then(({ toObject }) => toObject);
+// #endregion
+
+// #region Hooks
+export const useBuild = () => {
+  beforeAll(async () => {
+    exec('pnpm run build');
+    await addTarball();
+  });
+  afterAll(cleanup);
+};
+// #endregion

@@ -1,9 +1,7 @@
 import { addTarball, cleanup } from '@bemedev/build-tests';
-import { this1 } from '@bemedev/build-tests/constants';
 import { createTests } from '@bemedev/vitest-extended';
 import sh from 'shelljs';
-import { date, monad11 } from './fixtures';
-import type { Transform_F } from './types';
+import { buildTransform, date, monad11 } from './fixtures';
 
 beforeAll(async () => {
   sh.exec('pnpm run build');
@@ -18,9 +16,7 @@ describe('#1 => Simple right sort', () => {
   const { success, fails } = createTests.withImplementation(transformer2, {
     name: 'transformer2',
     async instanciation() {
-      const transform: Transform_F = await import(
-        `${this1}/transform`
-      ).then(({ transform }) => transform);
+      const transform = await buildTransform();
 
       return transform(monad11, {
         45: data => `Builded with right "${data}"`,
