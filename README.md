@@ -168,6 +168,7 @@ const concatenated = monad1.concat(monad2);
 
 // Utilisation avec transform
 const transformer = transform(concatenated, {
+  // Ici, on a deux arguments
   'string::45': (str, num) => `String ${str} avec nombre ${num}`,
   'number::bool': (num, bool) => `Nombre ${num} avec booléen ${bool}`,
   else: () => 'Combinaison non gérée',
