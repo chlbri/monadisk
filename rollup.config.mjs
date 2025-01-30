@@ -7,29 +7,25 @@ import { nodeExternals } from 'rollup-plugin-node-externals';
 import tsConfigPaths from 'rollup-plugin-tsconfig-paths';
 import typescript from 'rollup-plugin-typescript2';
 
-const ignore = [
+const exclude = [
   '**/*.test.ts',
   '**/*.test-d.ts',
-  './src/types.ts',
   '**/*.fixtures.ts',
+  '**/fixtures.ts',
   'src/config/**/*.ts',
   'src/fixtures/**/*.ts',
   'src/tests/**/*',
   'src/config/**/*',
 ];
 
+const ignore = [...exclude, '**/*.types.ts', '**/types.ts'];
+
 const input = Object.fromEntries(
-  globSync('src/**/*.ts', {
-    ignore,
-  }).map(file => [
-    // This remove `src/` as well as the file extension from each
-    // file, so e.g. src/nested/foo.js becomes nested/foo
+  globSync('src/**/*.ts', { ignore }).map(file => [
     path.relative(
       'src',
       file.slice(0, file.length - path.extname(file).length),
     ),
-    // This expands the relative paths to absolute paths, so e.g.
-    // src/nested/foo becomes /project/src/nested/foo.js
     fileURLToPath(new URL(file, import.meta.url)),
   ]),
 );
@@ -38,7 +34,9 @@ export default defineConfig({
   input,
   plugins: [
     tsConfigPaths(),
-    typescript({ tsconfigOverride: { exclude: ignore } }),
+    typescript({
+      tsconfigOverride: { exclude },
+    }),
     circularDependencies({
       exclude: [
         '**/types.ts',

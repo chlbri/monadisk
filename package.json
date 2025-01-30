@@ -1,6 +1,6 @@
 {
   "name": "@bemedev/monadisk",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "license": "MIT",
   "main": "lib/index.cjs",
   "typings": "lib/index.d.ts",
@@ -50,7 +50,7 @@
     "p-q": "pretty-quick --pattern \"**/*.*(ts|tsx)\"",
     "prepare": "husky",
     "prepublishOnly": "pnpm run lint && pnpm run build",
-    "pretest": "pnpm run build",
+    "pretest": "pnpm run build && pnpm run size",
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
     "remove": "rm -rf node_modules pnpm-lock.yaml",
     "rinit": "pnpm run remove && pnpm run config:off",
@@ -62,11 +62,11 @@
   },
   "size-limit": [
     {
-      "path": "lib/index.js",
+      "path": "lib/*.js",
       "limit": "10 KB"
     },
     {
-      "path": "lib/index.mjs",
+      "path": "lib/*.cjs",
       "limit": "10 KB"
     }
   ],
@@ -78,7 +78,7 @@
     "@bemedev/vitest-extended": "^1.1.6",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.19.0",
-    "@size-limit/preset-small-lib": "^11.1.6",
+    "@size-limit/file": "^11.1.6",
     "@types/node": "^22.12.0",
     "@types/shelljs": "^0.8.15",
     "@typescript-eslint/eslint-plugin": "^8.22.0",

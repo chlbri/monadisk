@@ -1,31 +1,38 @@
+import { type TupleOf } from '@bemedev/types';
+import { reduceFunctions } from './reduceFunctions';
 import { toObject } from './toObject';
-import { toSimple } from './toSimple';
-import type {
-  Add_F,
-  CheckerMap,
-  Merge,
-  ToObject,
-  ToSimple,
+import {
+  AND_LITERAL,
+  CONCAT_LITERAL,
+  OR_LITERAL,
+  type Add_F,
+  type Checker_F,
+  type CheckerMap,
+  type CheckerMapHeritage,
+  type Concat,
+  type MapLength,
+  type Merge,
+  type ToObject,
 } from './types';
 
 class Monad<const T extends CheckerMap = CheckerMap> {
   readonly #rawCheckers: T;
-  readonly #simpleCheckers: ToSimple<T>;
   readonly #checkers: ToObject<T>;
-  readonly #order: (keyof ToObject<T>)[];
+  readonly #order: (string | number)[];
 
   constructor(...checkers: T) {
     this.#rawCheckers = checkers;
-    this.#simpleCheckers = toSimple(checkers);
-    this.#checkers = toObject(...this.#simpleCheckers);
-    this.#order = checkers.map(([key]) => key) as any;
+    this.#checkers = toObject(...checkers);
+    this.#order = checkers.map(([key]) => key);
   }
 
   /**
    * @deprecated
-   * Used for typings and tests
+   * For typings
    */
-  readonly rawCheckers: T = undefined as any;
+  get rawCheckers() {
+    return this.#rawCheckers;
+  }
 
   get checkers() {
     return this.#checkers;
@@ -89,55 +96,97 @@ class Monad<const T extends CheckerMap = CheckerMap> {
     return new Monad(...checkers);
   };
 
-  #mergeAndOr = <U extends CheckerMap, AndOr extends boolean = true>(
+  #mergeAndOr = <
+    U extends CheckerMapHeritage<T>,
+    AndOr extends boolean = true,
+  >(
     monad: Monad<U> | U,
     and?: AndOr,
   ) => {
     const check1 = and === undefined || and === true;
     const check2 = monad instanceof Monad;
-    const out = [] as any;
+    const out: any[] = [];
 
-    this.#rawCheckers.forEach(([key1, func1]) => {
-      (check2 ? monad.#rawCheckers : monad).forEach(([key2, func2]) => {
-        const key = check1 ? `${key1}&${key2}` : `${key1}||${key2}`;
+    this.#rawCheckers.forEach(([key1, ...funcs1]) => {
+      (check2 ? monad.#rawCheckers : monad).forEach(
+        ([key2, ...funcs2]) => {
+          const key = check1
+            ? `${key1}${AND_LITERAL}${key2}`
+            : `${key1}${OR_LITERAL}${key2}`;
 
-        const func = check1
-          ? (arg: unknown) => {
-              const out1 = func1(arg);
-              if (out1 === false) return false;
+          const funcs: Checker_F[] = [];
 
-              const out2 = func2(out1.value);
-              return out2;
-            }
-          : (arg: unknown) => {
-              const out1 = func1(arg);
-              if (out1 === false) {
-                return func2(arg);
-              }
-              return out1;
-            };
+          for (let index = 0; index < funcs1.length; index++) {
+            const func1 = funcs1[index];
+            const func2 = funcs2[index];
 
-        out.push([key, func]);
-      });
+            const func = check1
+              ? (arg: unknown) => {
+                  const out1 = func1(arg);
+                  if (out1 === false) return false;
+
+                  const out2 = func2(out1.value);
+                  return out2;
+                }
+              : (arg: unknown) => {
+                  const out1 = func1(arg);
+                  if (out1 === false) {
+                    return func2(arg);
+                  }
+                  return out1;
+                };
+
+            funcs.push(func);
+          }
+
+          out.push([key, ...funcs]);
+        },
+      );
     });
 
     const checkers = out as Merge<T, U, AndOr>;
 
-    return new Monad<Merge<T, U, AndOr>>(...checkers);
+    return new Monad(...checkers);
   };
 
-  mergeAnd = <const U extends CheckerMap>(monad: Monad<U> | U) => {
+  mergeAnd = <const U extends CheckerMapHeritage<T>>(
+    monad: Monad<U> | U,
+  ) => {
     return this.#mergeAndOr(monad);
   };
 
-  mergeOr = <const U extends CheckerMap>(monad: Monad<U> | U) => {
+  mergeOr = <const U extends CheckerMapHeritage<T>>(
+    monad: Monad<U> | U,
+  ) => {
     return this.#mergeAndOr(monad, false);
   };
 
-  parse = (arg: unknown) => {
-    const checkers = this.#simpleCheckers as any[];
-    for (const [key, func] of checkers) {
-      const actual = func(arg);
+  concat = <const U extends CheckerMap>(monad: Monad<U> | U) => {
+    const check1 = monad instanceof Monad;
+    const raw1 = this.#rawCheckers;
+    const raw2 = check1 ? monad.#rawCheckers : monad;
+
+    const out: any[] = [];
+
+    raw1.forEach(([key1, ...funcs1]) => {
+      raw2.forEach(([key2, ...funcs2]) => {
+        const key = `${key1}${CONCAT_LITERAL}${key2}`;
+
+        out.push([key, ...funcs1, ...funcs2]);
+      });
+    });
+
+    const checkers = out as Concat<T, U>;
+    const out1 = new Monad(...checkers);
+
+    return out1;
+  };
+
+  parse = (...args: TupleOf<unknown, MapLength<T>>) => {
+    for (const [key, ...functions] of this.#rawCheckers) {
+      const func = reduceFunctions(...functions);
+      const actual = func(...args);
+
       if (actual) return key;
     }
 

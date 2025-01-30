@@ -57,7 +57,7 @@ describe('#2 => For boolean', () => {
   );
 });
 
-describe('#1 => For number', () => {
+describe('#3 => For number', () => {
   const funcN = (arg: unknown) => typeof arg === 'number';
   const { success, acceptation } = createTests(createCheck(funcN));
 
