@@ -57,7 +57,7 @@
     "rollup": "rollup -c",
     "size": "size-limit",
     "test": "vitest run",
-    "test:only": "vitest run",
+    "test:only": "vitest run ./src/transform.test.ts",
     "upgrade": "pnpm update --latest"
   },
   "size-limit": [
@@ -102,5 +102,8 @@
     "typescript": "^5.7.3",
     "valibot": "1.0.0-beta.14",
     "vitest": "^3.0.4"
+  },
+  "dependencies": {
+    "ts-arithmetic": "^0.1.1"
   }
 }

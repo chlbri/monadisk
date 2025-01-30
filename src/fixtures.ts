@@ -18,6 +18,23 @@ export const monad1 = createMonad(
   ['number', createCheck(data => typeof data === 'number')],
   [45, createCheck(data => data === 45)],
 );
+export const monad14 = createMonad(
+  [
+    'string',
+    createCheck(data => typeof data === 'string'),
+    createCheck(data => typeof data === 'string'),
+  ],
+  [
+    'number',
+    createCheck(data => typeof data === 'number'),
+    createCheck(data => typeof data === 'string'),
+  ],
+  [
+    45,
+    createCheck(data => data === 45),
+    createCheck(data => typeof data === 'string'),
+  ],
+);
 
 export const monad11 = createMonad(
   [45, createCheck(data => data === 45)],

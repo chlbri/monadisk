@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      ts-arithmetic:
+        specifier: ^0.1.1
+        version: 0.1.1
     devDependencies:
       '@bemedev/build-tests':
         specifier: ^0.1.0
@@ -1497,6 +1501,9 @@ packages:
     peerDependencies:
       typescript: '>=4.8.4'
 
+  ts-arithmetic@0.1.1:
+    resolution: {integrity: sha512-3VqgsRgzaYfj+zKWn+7O66ifHwbOOnT2BoOrHwdEUBz7az0DetoZOS20+juNJh1klgzvWEi2Qxden41pomOUAQ==}
+
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
@@ -2965,6 +2972,8 @@ snapshots:
   ts-api-utils@2.0.0(typescript@5.7.3):
     dependencies:
       typescript: 5.7.3
+
+  ts-arithmetic@0.1.1: {}
 
   tslib@2.8.1: {}
 

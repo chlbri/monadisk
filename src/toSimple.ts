@@ -1,23 +1,13 @@
-import type { ToSimple_F, ToSimpleOne_F } from './types';
-
-export const toSimpleOne: ToSimpleOne_F = func => {
-  const fn = (arg: unknown) => {
-    const out1 = func(arg);
-    if (out1 === false) return false;
-
-    return out1.check;
-  };
-
-  return fn;
-};
+import { reduceFunction } from './reduceFunctions';
+import type { ToSimple_F } from './types';
 
 export const toSimple: ToSimple_F = entries => {
   const out: any[] = [];
 
-  entries.forEach(([key, func]) => {
-    const fn = toSimpleOne(func);
+  entries.forEach(([key, ...funcs]) => {
+    const reFuncs = funcs.map(reduceFunction);
 
-    out.push([key, fn]);
+    out.push([key, ...reFuncs]);
   });
 
   return out as any;
