@@ -1,5 +1,11 @@
 ## CHANGELOG
 
+### Version [0.0.6] --> _2025/01/30 16/00_
+
+- Add option to concat monad
+
+<br/>
+
 ### Version [0.0.5] --> _2025/01/28 13:10_
 
 - Upgrade deps

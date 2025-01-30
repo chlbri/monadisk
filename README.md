@@ -8,7 +8,7 @@ transformations et des vérifications de types.
 ## Installation
 
 ```bash
-pnpm install monadisk
+pnpm add monadisk
 ```
 
 <br/>
@@ -142,9 +142,43 @@ console.log(transform(45)); // "Nombre spécial: 45"
 console.log(transform(true)); // "Type inconnu"
 ```
 
-<bt/>
+<br/>
 
-### NB: transform retuirn une erreur si le case n'est pas pris en charge
+### Concat (very powerfull)
+
+Concatène deux monades en combinant leurs vérificateurs avec le séparateur
+`::`. Cette méthode crée une nouvelle monade où l'on combine les
+vérificateurs des deux monades.
+
+```typescript
+// Exemple d'utilisation de concat
+const monad1 = createMonad(
+  ['string', createCheck(data => typeof data === 'string')],
+  ['number', createCheck(data => typeof data === 'number')],
+);
+
+const monad2 = createMonad(
+  [45, createCheck(data => data === 45)],
+  ['bool', createCheck(data => typeof data === 'boolean')],
+);
+
+// Crée une nouvelle monade avec les clés combinées:
+// 'string::45', 'string::bool', 'number::45', 'number::bool'
+const concatenated = monad1.concat(monad2);
+
+// Utilisation avec transform
+const transformer = transform(concatenated, {
+  'string::45': (str, num) => `String ${str} avec nombre ${num}`,
+  'number::bool': (num, bool) => `Nombre ${num} avec booléen ${bool}`,
+  else: () => 'Combinaison non gérée',
+});
+
+// Cette méthode est utile quand vous voulez créer une monade qui vérifie plusieurs conditions indépendantes sur différents arguments.
+```
+
+<br/>
+
+### NB: transform retourne une erreur si le cas n'est pas pris en charge
 
 ```typescript
 import { createMonad, createCheck, transform } from 'monadisk';
@@ -187,6 +221,12 @@ MIT
 ...
 </summary>
 
+### Version [0.0.6] --> _2025/01/30 16/00_
+
+- Add option to concat monad
+
+<br/>
+
 ### Version [0.0.5] --> _2025/01/28 13:10_
 
 - Upgrade deps
@@ -228,7 +268,6 @@ MIT
   monades complexes
   - Amélioration de la documentation des méthodes `mergeAnd` et `mergeOr`
   - Optimisation des performances pour les opérations de fusion
-
 
 </details>
 
