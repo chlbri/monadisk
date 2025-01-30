@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import type { LengthOf, TupleOf } from '@bemedev/types';
-import type { Subtract } from 'ts-arithmetic';
 import type { Monad } from './monad';
 
 export type Result<T = unknown> = { check: true; value: T } | false;
@@ -18,7 +17,7 @@ type Fn = (...args: any[]) => any;
 
 export type Checker<N extends number = number> = [
   string | number,
-  ...[Checker_F, ...TupleOf<Checker_F, Subtract<N, 1>>],
+  ...TupleOf<Checker_F, N>,
 ];
 
 export type GetFunctionsFrom<T extends Checker> = T extends [
@@ -34,7 +33,6 @@ export type DisplayChecker<T extends Checker> = {
 };
 
 export type CheckerMap<N extends number = number> = Checker<N>[];
-
 
 export type SimpleMap = [string, ...CheckerB_F[]][];
 export type MapLength<T extends CheckerMap> = LengthOf<
