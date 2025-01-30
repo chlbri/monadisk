@@ -57,7 +57,7 @@
     "rollup": "rollup -c",
     "size": "size-limit",
     "test": "vitest run",
-    "test:only": "vitest run ./src/transform.test.ts",
+    "test:only": "vitest run",
     "upgrade": "pnpm update --latest"
   },
   "size-limit": [

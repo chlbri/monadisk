@@ -3,12 +3,17 @@ import {
   monad1,
   monad11,
   monad2,
+  monad20,
+  monad20Keys,
+  monad21,
+  monad21Keys,
   monad3,
   monad5,
   monad6,
   monad7,
   monad8,
 } from './fixtures';
+import { AND_LITERAL, OR_LITERAL } from './types';
 
 describe('#1 => Acceptation', () => {
   test('#1 => Monad1 exist', () => {
@@ -71,7 +76,7 @@ describe('#3 => Merge', () => {
     const _actual = 'exist';
 
     entries.forEach(([key, func], index) => {
-      const expected = key === 'string&exist';
+      const expected = key === `string${AND_LITERAL}exist`;
 
       test(`#${index} => ${key}`, () => {
         const actual = func(_actual);
@@ -87,7 +92,8 @@ describe('#3 => Merge', () => {
 
     entries.forEach(([key, func], index) => {
       const expected = !(
-        key === '45||boolean' || key === 'number||boolean'
+        key === `45${OR_LITERAL}boolean` ||
+        key === `number${OR_LITERAL}boolean`
       );
 
       test(`#${index} => ${key}`, () => {
@@ -103,13 +109,27 @@ describe('#4 => Miscellaneous', () => {
     test('#1 => monad1', () => {
       const order = monad1.order;
 
+      const order2 = monad1.rawCheckers.map(([key]) => key);
       expect(order).toStrictEqual(['string', 'number', 45]);
+      expect(order).toStrictEqual(order2);
     });
 
     test('#2 => monad11', () => {
       const order = monad11.order;
 
       expect(order).toStrictEqual([45, 'string', 'number', 'date']);
+    });
+
+    test('#3 => monad20', () => {
+      const order = monad20.order;
+
+      expect(order).toStrictEqual(monad20Keys);
+    });
+
+    test('#3 => monad21', () => {
+      const order = monad21.order;
+
+      expect(order).toStrictEqual(monad21Keys);
     });
   });
 });

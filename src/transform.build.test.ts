@@ -1,13 +1,7 @@
-import { addTarball, cleanup } from '@bemedev/build-tests';
 import { createTests } from '@bemedev/vitest-extended';
-import sh from 'shelljs';
-import { buildTransform, date, monad11 } from './fixtures';
+import { buildTransform, date, monad11, useBuild } from './fixtures';
 
-beforeAll(async () => {
-  sh.exec('pnpm run build');
-  await addTarball();
-});
-afterAll(cleanup);
+useBuild();
 
 describe('#1 => Simple right sort', () => {
   //@ts-expect-error For test

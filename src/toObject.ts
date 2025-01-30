@@ -1,3 +1,4 @@
+import { reduceFunction } from './reduceFunctions';
 import type { ToObject_F } from './types';
 
 export const toObject: ToObject_F = (...map) => {
@@ -6,9 +7,9 @@ export const toObject: ToObject_F = (...map) => {
     const len = funcs.length;
 
     if (len === 1) {
-      out[key] = funcs[0];
+      out[key] = reduceFunction(funcs[0]);
     } else {
-      out[key] = funcs;
+      out[key] = funcs.map(reduceFunction);
     }
   });
 

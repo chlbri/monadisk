@@ -1,5 +1,5 @@
 import { createTests } from '@bemedev/vitest-extended';
-import { date, monad10, monad11, monad9 } from './fixtures';
+import { date, monad10, monad11, monad21, monad9 } from './fixtures';
 import { transform } from './transform';
 
 describe('#1 => Simple right sort', () => {
@@ -72,10 +72,10 @@ describe('#2 => Simple wrong sort', () => {
 describe('#3 => Merge', () => {
   describe('#1 => And', () => {
     const transformer5 = transform(monad10, {
-      'string&exist': data => `Builded with string&exist "${data}"`,
-      'number&64': data => `Builded with number&64 "${data}"`,
-      '45&45': data => `Builded with 45&45 "${data}"`,
-      'number&45': data => `Builded with number&45 "${data}"`,
+      'string&&exist': data => `Builded with string&&exist "${data}"`,
+      'number&&64': data => `Builded with number&&64 "${data}"`,
+      '45&&45': data => `Builded with 45&&45 "${data}"`,
+      'number&&45': data => `Builded with number&&45 "${data}"`,
       else: () => 'Not found',
     });
 
@@ -83,19 +83,19 @@ describe('#3 => Merge', () => {
 
     success(
       {
-        invite: 'string&exist',
+        invite: 'string&&exist',
         parameters: 'exist',
-        expected: 'Builded with string&exist "exist"',
+        expected: 'Builded with string&&exist "exist"',
       },
       {
-        invite: '45&45',
+        invite: '45&&45',
         parameters: 45,
-        expected: `Builded with 45&45 "45"`,
+        expected: `Builded with 45&&45 "45"`,
       },
       {
-        invite: 'number&64',
+        invite: 'number&&64',
         parameters: 64,
-        expected: `Builded with number&64 "64"`,
+        expected: `Builded with number&&64 "64"`,
       },
       {
         invite: 'other',
@@ -154,6 +154,46 @@ describe('#4 => With errors', () => {
         invite: 'date',
         parameters: date,
         expected: 'Builded with "2022"',
+      },
+    ),
+  );
+});
+
+describe('#5 => Concat', () => {
+  const transformer21 = transform(monad21, {
+    '45::strict45': (arg1, arg2) => {
+      return `45 - two ways : "${arg1}" - "${arg2}"`;
+    },
+    '45::number': (arg1, arg2) => {
+      return `45 - left : "${arg1}" - "${arg2}"`;
+    },
+    'number::strict45': (arg1, arg2) => {
+      return `45 - right : "${arg1}" - "${arg2}"`;
+    },
+    else: () => 'Make it else !',
+  });
+
+  const { success, acceptation } = createTests(transformer21);
+
+  describe('#0 => Acceptation', acceptation);
+
+  describe(
+    '#1 => Success',
+    success(
+      {
+        invite: '45::strict45',
+        parameters: [45, 45],
+        expected: `45 - two ways : "45" - "45"`,
+      },
+      {
+        invite: '45::number',
+        parameters: [45, 64],
+        expected: `45 - left : "45" - "64"`,
+      },
+      {
+        invite: 'number::strict45',
+        parameters: [64, 45],
+        expected: `45 - right : "64" - "45"`,
       },
     ),
   );

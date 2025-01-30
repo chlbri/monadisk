@@ -35,9 +35,11 @@ export type DisplayChecker<T extends Checker> = {
 
 export type CheckerMap<N extends number = number> = Checker<N>[];
 
+
 export type SimpleMap = [string, ...CheckerB_F[]][];
-export type MapLength<T extends CheckerMap> =
-  T extends CheckerMap<infer N> ? N : never;
+export type MapLength<T extends CheckerMap> = LengthOf<
+  GetFunctionsFrom<T[0]>
+>;
 
 export type CheckerHeritage<T extends Checker> =
   T extends Checker<infer N> ? Checker<N> : never;
@@ -124,7 +126,7 @@ export type ToSimpleOne_F = (fn: Checker_F) => CheckerB_F;
 type TrueKey<T> = T extends number | string ? T : never;
 
 // #region CONSTANTS
-export const AND_LITERAL = '&';
+export const AND_LITERAL = '&&';
 export type AndLiteral = typeof AND_LITERAL;
 
 export const OR_LITERAL = '||';
@@ -135,7 +137,9 @@ export type ConcatLiteral = typeof CONCAT_LITERAL;
 export type CL = ConcatLiteral;
 // #endregion
 
-export type ToB<T extends boolean = true> = T extends true ? '&' : '||';
+export type ToB<T extends boolean = true> = T extends true
+  ? AndLiteral
+  : OrLiteral;
 
 type Merge2<
   T extends Checker,
@@ -177,7 +181,8 @@ export type Merge<
 
 type Concat2<T extends Checker, U extends Checker> = [
   `${TrueKey<T[0]>}${CL}${TrueKey<U[0]>}`,
-  [...GetFunctionsFrom<T>, ...GetFunctionsFrom<U>],
+  ...GetFunctionsFrom<T>,
+  ...GetFunctionsFrom<U>,
 ];
 
 type Concat3<T extends Checker, M extends CheckerMap> = M extends [
@@ -219,7 +224,7 @@ export type Transform<
 export type Transform_F = <const T extends CheckerMap, Tr = any>(
   monad: Monad<T>,
   transformers: Transform<T, Tr>,
-) => (...args: TupleOf<unknown, MapLength<T>>) => Tr;
+) => Parser_F<T, Tr>;
 
 export type RawCheckersFrom<T extends Monad<any>> = T['rawCheckers'];
 export type CheckersFrom<T extends Monad> = T['checkers'];

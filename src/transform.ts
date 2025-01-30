@@ -3,7 +3,6 @@ import type { Transform_F } from './types';
 export const transform: Transform_F = (monad, transformers) => {
   return (...args) => {
     const key = monad.parse(...args);
-    console.log(key);
     const check1 = key !== undefined;
 
     if (check1) {

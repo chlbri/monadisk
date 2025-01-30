@@ -5,18 +5,15 @@ import type {
 
 export const reduceFunctions: ReduceFunctions_F = (...functions) => {
   return (...args) => {
-    const value: unknown[] = [];
     for (let index = 0; index < args.length; index++) {
       const arg = args[index];
-      const func = functions[index];
+      const func = reduceFunction(functions[index]);
 
       const out1 = func(arg);
       if (!out1) return false;
-
-      value.push(out1.value);
     }
 
-    return { check: true, value };
+    return true;
   };
 };
 
