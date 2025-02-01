@@ -1,4 +1,5 @@
 import { type TupleOf } from '@bemedev/types';
+import { PARSE_ERROR } from './constants';
 import { reduceFunctions } from './reduceFunctions';
 import { toObject } from './toObject';
 import {
@@ -40,6 +41,10 @@ class Monad<const T extends CheckerMap = CheckerMap> {
 
   get order() {
     return this.#order;
+  }
+
+  get copy() {
+    return new Monad(...this.#rawCheckers);
   }
 
   #andOr(monad: this | T, and = true) {
@@ -182,7 +187,7 @@ class Monad<const T extends CheckerMap = CheckerMap> {
     return out1;
   };
 
-  parse = (...args: TupleOf<unknown, MapLength<T>>) => {
+  safeParse = (...args: TupleOf<unknown, MapLength<T>>) => {
     for (const [key, ...functions] of this.#rawCheckers) {
       const func = reduceFunctions(...functions);
       const actual = func(...args);
@@ -192,11 +197,21 @@ class Monad<const T extends CheckerMap = CheckerMap> {
 
     return undefined;
   };
+
+  parse = (...args: TupleOf<unknown, MapLength<T>>) => {
+    const out = this.safeParse(...args);
+    const check = out === undefined;
+
+    if (check) throw new Error(PARSE_ERROR);
+    return out;
+  };
 }
 
 export type { Monad };
 
-export const createMonad = <const T extends CheckerMap = CheckerMap>(
+export const createMonad = <
+  const T extends CheckerMap<any> = CheckerMap<any>,
+>(
   ...checkers: T
 ) => {
   const out = new Monad(...checkers);

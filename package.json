@@ -1,6 +1,6 @@
 {
   "name": "@bemedev/monadisk",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "license": "MIT",
   "main": "lib/index.cjs",
   "typings": "lib/index.d.ts",
@@ -57,7 +57,7 @@
     "rollup": "rollup -c",
     "size": "size-limit",
     "test": "vitest run",
-    "test:only": "vitest run",
+    "test:only": "vitest run ./src/monad.test.ts",
     "upgrade": "pnpm update --latest"
   },
   "size-limit": [
@@ -91,7 +91,7 @@
     "onchange": "^7.1.0",
     "prettier": "^3.4.2",
     "pretty-quick": "^4.0.0",
-    "rollup": "^4.32.1",
+    "rollup": "^4.34.0",
     "rollup-plugin-circular-dependencies": "^1.1.2",
     "rollup-plugin-node-externals": "^8.0.0",
     "rollup-plugin-tsconfig-paths": "^1.5.2",
