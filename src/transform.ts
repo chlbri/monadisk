@@ -1,8 +1,10 @@
 import type { Transform_F } from './types';
 
-export const transform: Transform_F = (monad, transformers) => {
+export const transform: Transform_F = (_monad, transformers) => {
+  const monad = _monad.copy;
+
   return (...args) => {
-    const key = monad.parse(...args);
+    const key = monad.safeParse(...args);
     const check1 = key !== undefined;
 
     if (check1) {

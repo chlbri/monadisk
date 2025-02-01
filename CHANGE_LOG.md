@@ -1,6 +1,12 @@
 ## CHANGELOG
 
-### Version [0.0.6] --> _2025/01/30 16/00_
+### Version [0.0.7] --> _2025/02/01 21:00_
+
+- Add helpers to simplify usage
+
+<br/>
+
+### Version [0.0.6] --> _2025/01/30 16:00_
 
 - Add option to concat monad
 
