@@ -7,11 +7,34 @@ export type Result<T = unknown> = { check: true; value: T } | false;
 export type CheckerB_F = (arg: unknown) => boolean;
 export type Checker_F<T = any> = (arg: unknown) => Result<T>;
 
-export type CheckerA<T> =
-  | ((arg: unknown) => arg is T)
-  | ((arg: unknown) => boolean);
+export type CheckerA<T = any> = ((arg: unknown) => arg is T) | CheckerB_F;
 
 export type CreateCheck_F = <T = any>(fn: CheckerA<T>) => Checker_F<T>;
+
+export type TransformCheck<T extends CheckerA> =
+  T extends CheckerA<infer A> ? Checker_F<A> : never;
+
+export type TransformChecks<T extends CheckerA[]> = T extends [
+  infer U extends CheckerA,
+  ...infer Rest extends CheckerA[],
+]
+  ? [
+      TransformCheck<U>,
+      ...(LengthOf<Rest> extends 0 ? [] : TransformChecks<Rest>),
+    ]
+  : [];
+
+export type CreateChecker_F = <
+  K extends string | number,
+  T extends CheckerA<any>[],
+>(
+  key: K,
+  ...functions: T
+) => [K, ...TransformChecks<T>];
+
+export type CreateCheckerSN_F = <K extends string | number>(
+  key: K,
+) => [K, Checker_F<K>];
 
 type Fn = (...args: any[]) => any;
 

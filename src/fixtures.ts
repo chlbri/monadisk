@@ -3,6 +3,14 @@ import { this1 } from '@bemedev/build-tests/constants';
 import { t } from '@bemedev/types';
 import { exec } from 'shelljs';
 import { createCheck } from './createCheck';
+import { checkNumber, checkString } from './createCheck.helpers';
+import { createChecker, createCheckerSN } from './createChecker';
+import {
+  checkerBoolean,
+  checkerDate,
+  checkerNumber,
+  checkerString,
+} from './createChecker.helpers';
 import { createMonad } from './monad';
 import type {
   Checker_F,
@@ -13,39 +21,27 @@ import type {
 
 // #region Parameters (monad)
 export const monad1 = createMonad(
-  ['string', createCheck(data => typeof data === 'string')],
-  ['number', createCheck(data => typeof data === 'number')],
-  [45, createCheck(data => data === 45)],
+  checkerString,
+  checkerNumber,
+  createCheckerSN(45),
 );
 export const monad111 = createMonad(
-  [45, createCheck(data => data === 45)],
-  ['number', createCheck(data => typeof data === 'number')],
-  ['string', createCheck(data => typeof data === 'string')],
+  createCheckerSN(45),
+  checkerNumber,
+  checkerString,
 );
 
 export const monad14 = createMonad(
-  [
-    'string',
-    createCheck(data => typeof data === 'string'),
-    createCheck(data => typeof data === 'string'),
-  ],
-  [
-    'number',
-    createCheck(data => typeof data === 'number'),
-    createCheck(data => typeof data === 'string'),
-  ],
-  [
-    45,
-    createCheck(data => data === 45),
-    createCheck(data => typeof data === 'string'),
-  ],
+  ['string', checkString, checkString],
+  ['number', checkNumber, checkString],
+  [45, createCheck(data => data === 45), checkString],
 );
 
 export const monad11 = createMonad(
   [45, createCheck(data => data === 45)],
-  ['string', createCheck(data => typeof data === 'string')],
-  ['number', createCheck(data => typeof data === 'number')],
-  ['date', createCheck(data => data instanceof Date)],
+  checkerString,
+  checkerNumber,
+  checkerDate,
 );
 
 export const monad2 = createMonad(
@@ -59,8 +55,8 @@ export const monad2 = createMonad(
 export const monad3 = monad1.or(monad2);
 
 export const monad4 = createMonad(
-  ['boolean', createCheck(data => typeof data === 'boolean')],
-  ['exist', createCheck(data => data === 'exist')],
+  checkerBoolean,
+  createChecker('exist', data => data === 'exist'),
 );
 
 export const monad5 = monad2.mergeAnd(monad4);
@@ -95,7 +91,7 @@ export const monad20 = monad1.concat(monad10);
 
 export const monad21 = monad111.concat([
   ['strict45', createCheck(data => data === 45)],
-  ['number', createCheck(data => typeof data === 'number')],
+  checkerNumber,
   ['string', createCheck(data => typeof data === 'string')],
 ]);
 
