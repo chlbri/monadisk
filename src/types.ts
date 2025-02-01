@@ -1,6 +1,21 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { LengthOf, TupleOf } from '@bemedev/types';
+import type { LengthOf, Primitive, TupleOf } from '@bemedev/types';
 import type { Monad } from './monad';
+
+export type ToString_F = <T extends Primitive>(value: T) => PTS<T>;
+
+export type PrimeToString<T extends Primitive> = T extends number
+  ? T
+  : `${T}`;
+
+export type PTS<T extends Primitive> = PrimeToString<T>;
+
+export type PrimesToStrings<T extends Primitive[]> = T extends [
+  infer U extends Primitive,
+  ...infer Rest extends Primitive[],
+]
+  ? [PTS<U>, ...(LengthOf<Rest> extends 0 ? [] : PrimesToStrings<Rest>)]
+  : never;
 
 export type Result<T = unknown> = { check: true; value: T } | false;
 
@@ -11,16 +26,16 @@ export type CheckerA<T = any> = ((arg: unknown) => arg is T) | CheckerB_F;
 
 export type CreateCheck_F = <T = any>(fn: CheckerA<T>) => Checker_F<T>;
 
-export type TransformCheck<T extends CheckerA> =
+export type TransformCheckA<T extends CheckerA> =
   T extends CheckerA<infer A> ? Checker_F<A> : never;
 
-export type TransformChecks<T extends CheckerA[]> = T extends [
+export type TransformChecksA<T extends CheckerA[]> = T extends [
   infer U extends CheckerA,
   ...infer Rest extends CheckerA[],
 ]
   ? [
-      TransformCheck<U>,
-      ...(LengthOf<Rest> extends 0 ? [] : TransformChecks<Rest>),
+      TransformCheckA<U>,
+      ...(LengthOf<Rest> extends 0 ? [] : TransformChecksA<Rest>),
     ]
   : [];
 
@@ -30,11 +45,35 @@ export type CreateChecker_F = <
 >(
   key: K,
   ...functions: T
-) => [K, ...TransformChecks<T>];
+) => [K, ...TransformChecksA<T>];
 
 export type CreateCheckerSN_F = <K extends string | number>(
   key: K,
-) => [K, Checker_F<K>];
+) => CheckerSN<K>;
+
+export type CreatePrimeChecker_F = <K extends Primitive>(
+  key: K,
+) => [PTS<K>, Checker_F<K>];
+
+export type CheckerSN<K extends string | number> = [K, Checker_F<K>];
+
+export type TransformChecksSN<T extends (string | number)[]> = T extends [
+  infer U extends string | number,
+  ...infer Rest extends (string | number)[],
+]
+  ? [
+      CheckerSN<U>,
+      ...(LengthOf<Rest> extends 0 ? [] : TransformChecksSN<Rest>),
+    ]
+  : [];
+
+export type CreateMonadSN_F = <const T extends (string | number)[]>(
+  ...keys: T
+) => Monad<TransformChecksSN<T>>;
+
+export type CreatePrimitiveMonad_F = <const T extends Primitive[]>(
+  ...keys: T
+) => Monad<TransformChecksSN<PrimesToStrings<T>>>;
 
 type Fn = (...args: any[]) => any;
 

@@ -30,5 +30,6 @@ export default defineConfig({
       enabled: true,
       ignoreSourceErrors: true,
     },
+    globalSetup: './vitest.global.ts',
   },
 });

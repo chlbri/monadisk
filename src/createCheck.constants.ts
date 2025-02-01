@@ -17,9 +17,11 @@ export const checkString = createCheck(arg => typeof arg === 'string');
 export const checkSymbol = createCheck(arg => typeof arg === 'symbol');
 
 export const checkUndefined = createCheck(
-  arg => typeof arg === 'undefined',
+  (arg): arg is undefined => typeof arg === 'undefined',
 );
 
-export const checkNull = createCheck(arg => arg === null);
+export const checkNull = createCheck((arg): arg is null => arg === null);
 
-export const checkDate = createCheck(arg => arg instanceof Date);
+export const checkDate = createCheck(
+  (arg): arg is Date => arg instanceof Date,
+);

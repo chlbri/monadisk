@@ -3,12 +3,13 @@ import {
   checkBoolean,
   checkDate,
   checkFunction,
+  checkNull,
   checkNumber,
   checkObject,
   checkString,
   checkSymbol,
   checkUndefined,
-} from './createCheck.helpers';
+} from './createCheck.constants';
 import type { Checker } from './types';
 
 export const checkerBigInt = [
@@ -50,5 +51,7 @@ export const checkerUndefined = [
   'undefined',
   checkUndefined,
 ] as const satisfies Checker;
+
+export const checkerNull = ['null', checkNull] as const satisfies Checker;
 
 export const checkerDate = ['date', checkDate] as const satisfies Checker;

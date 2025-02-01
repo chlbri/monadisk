@@ -3,14 +3,14 @@ import { this1 } from '@bemedev/build-tests/constants';
 import { t } from '@bemedev/types';
 import { exec } from 'shelljs';
 import { createCheck } from './createCheck';
-import { checkNumber, checkString } from './createCheck.helpers';
+import { checkNumber, checkString } from './createCheck.constants';
 import { createChecker, createCheckerSN } from './createChecker';
 import {
   checkerBoolean,
   checkerDate,
   checkerNumber,
   checkerString,
-} from './createChecker.helpers';
+} from './createChecker.constants';
 import { createMonad } from './monad';
 import type {
   Checker_F,
@@ -34,7 +34,11 @@ export const monad111 = createMonad(
 export const monad14 = createMonad(
   ['string', checkString, checkString],
   ['number', checkNumber, checkString],
-  [45, createCheck(data => data === 45), checkString],
+  createChecker(
+    45,
+    data => data === 45,
+    data => typeof data === 'string',
+  ),
 );
 
 export const monad11 = createMonad(
@@ -56,7 +60,7 @@ export const monad3 = monad1.or(monad2);
 
 export const monad4 = createMonad(
   checkerBoolean,
-  createChecker('exist', data => data === 'exist'),
+  createCheckerSN('exist'),
 );
 
 export const monad5 = monad2.mergeAnd(monad4);
@@ -75,7 +79,7 @@ export const monad8 = monad1.or([
 ]);
 
 export const monad9 = createMonad(
-  ['string', createCheck(data => typeof data === 'string')],
+  checkerString,
   ['number', createCheck(data => typeof data === 'number')],
   ['strict45', createCheck(data => data === 45)],
 );
@@ -177,11 +181,20 @@ export const buildToObject: BuildToObject_F = () =>
 // #endregion
 
 // #region Hooks
+
+export const isExtension = process.env.VITEST_VSCODE === 'true';
+
+// #region Too heavy
+
 export const useBuild = () => {
-  beforeAll(async () => {
-    exec('pnpm run build');
-    await addTarball();
-  });
-  afterAll(cleanup);
+  if (isExtension) {
+    beforeAll(async () => {
+      exec('pnpm run build');
+      await addTarball();
+    });
+    afterAll(cleanup);
+  }
 };
+// #endregion
+
 // #endregion
