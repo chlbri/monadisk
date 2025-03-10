@@ -9,7 +9,7 @@ import { PRIMITIVE_MONAD } from './monad.constants';
 useBuild();
 
 type Fn1 = (typeof PRIMITIVE_MONAD)['safeParse'];
-const func = t.anify<Fn1>();
+const func = t.unknown<Fn1>();
 
 describe('#1 => PRIMITIVE_MONAD', () => {
   const { acceptation, success } = createTests.withImplementation(func, {

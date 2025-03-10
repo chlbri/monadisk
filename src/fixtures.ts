@@ -166,7 +166,7 @@ export const monad21Keys = [
 export const date = new Date('2022-03-25');
 
 // #region Built Functions
-export const funcT = <T>() => t.anify<Checker_F<T>>();
+export const funcT = <T>() => t.unknown<Checker_F<T>>();
 type BuildTransform_F = () => Promise<Transform_F>;
 export const buildTransform: BuildTransform_F = () =>
   import(`${this1}/transform`).then(({ transform }) => transform);

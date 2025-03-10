@@ -1,5 +1,18 @@
 ## CHANGELOG
 
+
+### Version [0.1.1] --> _2025/03/10 12:30_
+
+- Upgrade deps
+
+<br/>
+
+### Version [0.1.0] --> _2025/02/15 21:00_
+
+- Release for better performance
+
+<br/>
+
 ### Version [0.0.7] --> _2025/02/01 21:00_
 
 - Add helpers to simplify usage
