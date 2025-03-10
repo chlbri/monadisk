@@ -14,7 +14,7 @@ useBuild();
 
 describe('toObject', () => {
   type Fn1 = (arg: Monad<any>) => number;
-  const func = t.anify<Fn1>();
+  const func = t.unknown<Fn1>();
 
   const { acceptation, success } = createTests.withImplementation(func, {
     name: 'toObject',
