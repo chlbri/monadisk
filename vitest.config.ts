@@ -25,6 +25,7 @@ export default defineConfig({
       extension: 'ts',
       all: true,
       provider: 'v8',
+      reportsDirectory: '.coverage',
     },
     typecheck: {
       enabled: true,
