@@ -1,6 +1,6 @@
 import { addTarball, cleanup } from '@bemedev/build-tests';
 import sh from 'shelljs';
-import { isExtension } from './src/fixtures';
+import { isExtension } from './src/fixtures.constants';
 import { env } from './vitest.env';
 
 export const setup = async () => {

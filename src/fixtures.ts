@@ -1,6 +1,5 @@
 import { addTarball, cleanup } from '@bemedev/build-tests';
 import { this1 } from '@bemedev/build-tests/constants';
-import { t } from '@bemedev/types';
 import { exec } from 'shelljs';
 import { createCheck } from './createCheck';
 import { checkNumber, checkString } from './createCheck.constants';
@@ -18,6 +17,8 @@ import type {
   ToObject_F,
   Transform_F,
 } from './types';
+import { _unknown } from '@bemedev/core';
+import { isExtension } from './fixtures.constants';
 
 // #region Parameters (monad)
 export const monad1 = createMonad(
@@ -166,7 +167,7 @@ export const monad21Keys = [
 export const date = new Date('2022-03-25');
 
 // #region Built Functions
-export const funcT = <T>() => t.unknown<Checker_F<T>>();
+export const funcT = <T>() => _unknown<Checker_F<T>>();
 type BuildTransform_F = () => Promise<Transform_F>;
 export const buildTransform: BuildTransform_F = () =>
   import(`${this1}/transform`).then(({ transform }) => transform);
@@ -181,8 +182,6 @@ export const buildToObject: BuildToObject_F = () =>
 // #endregion
 
 // #region Hooks
-
-export const isExtension = process.env.VITEST_VSCODE === 'true';
 
 // #region Too heavy
 

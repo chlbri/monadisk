@@ -3,12 +3,19 @@ import { exclude } from '@bemedev/vitest-exclude';
 import { defineConfig } from 'vitest/config';
 
 import tsconfig from './tsconfig.json';
+import { isExtension } from './src/fixtures.constants';
 
 export default defineConfig({
   plugins: [
     aliasTs(tsconfig as any),
     exclude({
-      ignoreCoverageFiles: ['**/index.ts', '**/types.ts', '**/*.types.ts'],
+      ignoreCoverageFiles: [
+        '**/index.ts',
+        '**/types.ts',
+        '**/*.types.ts',
+        '**/fixtures.ts',
+        '**/fixtures.*.ts',
+      ],
     }),
   ],
 
@@ -17,7 +24,7 @@ export default defineConfig({
     passWithNoTests: true,
     bail: 10,
     maxConcurrency: 10,
-    fileParallelism: false,
+    fileParallelism: !isExtension,
     logHeapUsage: true,
     globals: true,
     coverage: {

@@ -1,4 +1,4 @@
-import { type TupleOf } from '@bemedev/types';
+import { type TupleOf } from '@bemedev/core/lib/globals/types.js';
 import { PARSE_ERROR } from './constants';
 import { reduceFunctions } from './reduceFunctions';
 import { toObject } from './toObject';

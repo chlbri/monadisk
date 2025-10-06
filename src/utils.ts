@@ -1,4 +1,4 @@
-import type { Primitive } from '@bemedev/types';
+import type { Primitive } from '@bemedev/core/lib/globals/types.js';
 import type { ToString_F } from './types';
 
 export const toString: ToString_F = (value: Primitive) => {

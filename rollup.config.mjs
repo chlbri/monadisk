@@ -1,3 +1,7 @@
 import { defineConfig } from '@bemedev/rollup-config';
 
-export default defineConfig.bemedev({ declarationMap: true });
+export default defineConfig({
+  declarationMap: true,
+  ignoresJS: ['**/*.types.ts'],
+  sourcemap: true,
+});

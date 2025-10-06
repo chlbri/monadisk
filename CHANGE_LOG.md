@@ -1,5 +1,12 @@
 ## CHANGELOG
 
+### Version [0.1.2] --> _2025/10/06 18:50_
+
+- Upgrade deps
+- Fix error of exporting types
+- Switch from peer dependencies `@bemedev/types` to `@bemedev/core`
+
+<br/>
 
 ### Version [0.1.1] --> _2025/03/10 12:30_
 

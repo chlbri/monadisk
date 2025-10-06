@@ -1,4 +1,3 @@
-import { t } from '@bemedev/types';
 import { createTests } from '@bemedev/vitest-extended';
 import {
   buildToObject,
@@ -9,12 +8,13 @@ import {
   useBuild,
 } from './fixtures';
 import type { Monad } from './monad';
+import { _unknown } from '@bemedev/core';
 
 useBuild();
 
 describe('toObject', () => {
   type Fn1 = (arg: Monad<any>) => number;
-  const func = t.unknown<Fn1>();
+  const func = _unknown<Fn1>();
 
   const { acceptation, success } = createTests.withImplementation(func, {
     name: 'toObject',

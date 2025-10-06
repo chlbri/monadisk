@@ -1,15 +1,15 @@
 import { this1 } from '@bemedev/build-tests/constants';
-import { t } from '@bemedev/types';
 import { createTests } from '@bemedev/vitest-extended';
 import { writeFile } from 'node:fs/promises';
 import { PARSE_ERROR } from './constants';
 import { useBuild } from './fixtures';
 import { PRIMITIVE_MONAD } from './monad.constants';
+import { _unknown } from '@bemedev/core';
 
 useBuild();
 
 type Fn1 = (typeof PRIMITIVE_MONAD)['safeParse'];
-const func = t.unknown<Fn1>();
+const func = _unknown<Fn1>();
 
 describe('#1 => PRIMITIVE_MONAD', () => {
   const { acceptation, success } = createTests.withImplementation(func, {
@@ -95,15 +95,16 @@ describe('#2 => SN', () => {
     {
       name: 'createMonadSN',
       instanciation: async () => {
-        const createMonadSN = await import(`${this1}/monad.helpers`).then(
+        const createMonadSN = await import(`${this1}`).then(
           ({ createMonadSN }) => createMonadSN,
         );
         const monad = createMonadSN('Lévi', 45, 'Charles');
 
         return monad.parse.bind(monad);
       },
+
+      toError,
     },
-    toError,
   );
 
   describe('#0 => Acceptation', acceptation);
@@ -179,8 +180,8 @@ describe('#3 => Other Primes', () => {
 
         return monad.parse.bind(monad);
       },
+      toError,
     },
-    toError,
   );
 
   describe('#0 => Acceptation', acceptation);

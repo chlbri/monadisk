@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import type { LengthOf, Primitive, TupleOf } from '@bemedev/types';
+import type {
+  Primitive,
+  TupleOf,
+} from '@bemedev/core/lib/globals/types.js';
 import type { Monad } from './monad';
+
+export type LengthOf<T extends any[]> = T['length'];
 
 export type ToString_F = <T extends Primitive>(value: T) => PTS<T>;
 
