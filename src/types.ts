@@ -274,22 +274,44 @@ export type Parser_F<T extends CheckerMap, Tr = any> = (
   ...args: TupleOf<unknown, MapLength<T>>
 ) => Tr;
 
+// Utilitaire pour extraire tous les types de retour des transformateurs
+type ReturnTypes<T extends Record<string, (...args: any[]) => any>> = {
+  [K in keyof T]: ReturnType<T[K]>;
+}[keyof T];
+
+// Type Transform avec inférence automatique
 export type Transform<
   C extends CheckerMap,
-  Tr = any,
   T extends ToObject2<C> = ToObject2<C>,
 > =
-  | ({
-      [key in keyof T]?: (...args: ResultsFrom<T[key]>) => Tr;
-    } & { else: Parser_F<C, Tr> })
-  | ({
-      [key in keyof T]: (...args: ResultsFrom<T[key]>) => Tr;
-    } & { else?: Parser_F<C, Tr> });
+  | ({ else: Parser_F<C, any> } & {
+      [key in keyof T]?: (...args: ResultsFrom<T[key]>) => any;
+    })
+  | ({ else?: Parser_F<C, any> } & {
+      [key in keyof T]: (...args: ResultsFrom<T[key]>) => any;
+    });
 
-export type Transform_F = <const T extends CheckerMap, Tr = any>(
+// Type Transform avec type de retour explicite (pour compatibilité)
+export type TransformWithReturnType<
+  C extends CheckerMap,
+  Tr,
+  T extends ToObject2<C> = ToObject2<C>,
+  Te extends Tr = Tr,
+> =
+  | ({ else: Parser_F<C, Tr> } & {
+      [key in keyof T]?: (...args: ResultsFrom<T[key]>) => Te;
+    })
+  | ({ else?: Parser_F<C, Te> } & {
+      [key in keyof T]: (...args: ResultsFrom<T[key]>) => Tr;
+    });
+
+export type Transform_F = <
+  const T extends CheckerMap,
+  const Transformers extends Transform<T>,
+>(
   monad: Monad<T>,
-  transformers: Transform<T, Tr>,
-) => Parser_F<T, Tr>;
+  transformers: Transformers,
+) => Parser_F<T, ReturnTypes<Transformers>>;
 
 export type RawCheckersFrom<T extends Monad<any>> = T['rawCheckers'];
 export type CheckersFrom<T extends Monad> = T['checkers'];

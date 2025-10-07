@@ -15,5 +15,5 @@ export const createPrimeChecker: CreatePrimeChecker_F = key => {
 };
 
 export const createCheckerSN: CreateCheckerSN_F = key => {
-  return createChecker(key, arg => arg === key) as any;
+  return createPrimeChecker(key) as any;
 };

@@ -42,10 +42,11 @@ describe('#1 => Simple right sort', () => {
 });
 
 describe('#2 => Simple wrong sort', () => {
-  const transformer2 = transform(monad9, {
+  const transformer2 = monad9.transform({
     strict45: data => `Builded with right "${data}"`,
     string: data => `Builded with "${data}"`,
     number: data => `Builded with "${data}"`,
+    // else: () => 'true',
   });
 
   const { success } = createTests(transformer2);

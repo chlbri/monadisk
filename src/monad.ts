@@ -1,3 +1,4 @@
+import { transform } from './transform';
 import { type TupleOf } from '@bemedev/core/lib/globals/types.js';
 import { PARSE_ERROR } from './constants';
 import { reduceFunctions } from './reduceFunctions';
@@ -14,6 +15,7 @@ import {
   type MapLength,
   type Merge,
   type ToObject,
+  type Transform,
 } from './types';
 
 class Monad<const T extends CheckerMap = CheckerMap> {
@@ -204,6 +206,12 @@ class Monad<const T extends CheckerMap = CheckerMap> {
 
     if (check) throw new Error(PARSE_ERROR);
     return out;
+  };
+
+  transform = <const Transformers extends Transform<T>>(
+    transformers: Transformers,
+  ) => {
+    return transform(this, transformers);
   };
 }
 

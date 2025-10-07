@@ -1,5 +1,14 @@
 ## CHANGELOG
 
+<br/>
+
+### Version [0.1.3] --> _2025/10/01 11:50_
+
+- Upgrade deps
+- Better typings
+
+<br/>
+
 ### Version [0.1.2] --> _2025/10/06 18:50_
 
 - Upgrade deps
